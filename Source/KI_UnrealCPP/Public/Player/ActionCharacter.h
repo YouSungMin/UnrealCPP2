@@ -41,6 +41,5 @@ protected:
 	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction> IA_Move;
-
+	TObjectPtr<UInputAction> IA_Move;	
 };
