@@ -34,6 +34,9 @@ protected:
 	// 이동 방향 입력 받기
 	void OnMoveInput(const FInputActionValue& InValue);
 
+	// 구르기 입력 받기
+	void OnRollInput(const FInputActionValue& InValue);
+
 	// 달리기 모드 설정
 	void SetSprintMode();
 
@@ -51,6 +54,8 @@ protected:
 	TObjectPtr<UInputAction> IA_Move = nullptr;	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Sprint = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Roll = nullptr;
 
 	// 달리기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
@@ -58,4 +63,12 @@ protected:
 	// 걷기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
 	float WalkSpeed = 600.0f;
+
+	// 구르기 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
+	TObjectPtr<UAnimMontage> RollMontage = nullptr;
+
+private:
+	UPROPERTY()
+	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;
 };
