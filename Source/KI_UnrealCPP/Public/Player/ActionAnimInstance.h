@@ -23,5 +23,5 @@ protected:
 	float Speed = 0.0f;
 
 private:
-	TWeakObjectPtr<const UPawnMovementComponent> OwnerMovementComponent;
+	TWeakObjectPtr<const UPawnMovementComponent> OwnerMovementComponent = nullptr;
 };
