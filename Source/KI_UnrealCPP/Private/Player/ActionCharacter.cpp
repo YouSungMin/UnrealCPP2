@@ -84,7 +84,10 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 	{
 		if (!AnimInstance->IsAnyMontagePlaying())
 		{
-			//SetActorRotation(GetLastMovementInputVector().Rotation());	// 마지막 입력 방향으로 회전 시키기
+			//if (!GetLastMovementInputVector().IsNearlyZero())	// 입력을 하는 중에만 즉시 회전
+			//{
+			//	SetActorRotation(GetLastMovementInputVector().Rotation());	// 마지막 입력 방향으로 즉시 회전 시키기
+			//}
 			PlayAnimMontage(RollMontage);
 		}
 	}
