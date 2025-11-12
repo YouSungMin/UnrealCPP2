@@ -44,14 +44,15 @@ protected:
 	void SetWalkMode();
 
 private:
-	void StaminaRegenTimerSet();
-	void StaminaRegenPerTick();
+	
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class USpringArmComponent> SpringArm = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Resource")
+	TObjectPtr<class UResourceComponent> Resource = nullptr;
 
 	// 인풋 액션들
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -71,15 +72,7 @@ protected:
 	// 구르기 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
 	TObjectPtr<UAnimMontage> RollMontage = nullptr;
-
-	// 현재 스태미너
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Resource")
-	float CurrentStamina = 100.0f;
-
-	// 최대 스태미너
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Resource")
-	float MaxStamina = 100.0f;
-
+	
 	// 달리기 상태일 때 초당 스태미너 비용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float SprintStaminaCost = 20.0f;
@@ -87,23 +80,7 @@ protected:
 	// 구르기를 하기 위해 필요한 스태미너 비용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float RollStaminaCost = 50.0f;
-
-	// 스테미너가 자동 회복되는데 걸리는 시간
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenCoolTime = 3.0f;
-
-	// 스태미너 자동 회복양(초당)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenAmount = 50.0f;
-
-	// 스태미너 자동 회복양(틱당)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenAmountPerTick = 10.0f;
-
-	// 스태미너 자동 회복양(틱당, 최대치의 %)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float StaminaRegenRatePerTick = 0.1f;
-
+	
 	// 플레이어가 뛰고 있는 중인지 표시 해놓은 변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
 	bool bIsSprint = false;
@@ -112,9 +89,4 @@ private:
 	UPROPERTY()
 	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;
 
-	float TimeSinceLastStaminaUse = 0.0f;
-	
-	FTimerHandle StaminaCoolTimer;
-	FTimerHandle StaminaRegenTimer;
-	bool bRegenStamina = false;
 };
