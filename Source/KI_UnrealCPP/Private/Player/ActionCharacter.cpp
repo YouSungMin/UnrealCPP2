@@ -65,7 +65,7 @@ void AActionCharacter::Tick(float DeltaTime)
 	//	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
 	//}
 
-	if (bIsSprint)
+	if (bIsSprint && !GetVelocity().IsNearlyZero())	// 달리기 모드인 상태에서 움직이면 스태미너를 소비한다.
 	{
 		CurrentStamina -= SprintStaminaCost * DeltaTime;
 		
