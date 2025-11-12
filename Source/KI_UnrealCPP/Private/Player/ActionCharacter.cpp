@@ -36,10 +36,17 @@ void AActionCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
+	if (GetMesh())
+	{
+		AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
+	}
+	if (Resource)
+	{
+		Resource->OnStaminaEmpty.AddDynamic(this, &AActionCharacter::SetWalkMode);
+	}
 
 	// 게임 진행 중에 자주 변경되는 값은 시작 시점에서 리셋을 해주는 것이 좋다.
-	bIsSprint = false;
+	bIsSprint = false;	
 }
 
 // Called every frame

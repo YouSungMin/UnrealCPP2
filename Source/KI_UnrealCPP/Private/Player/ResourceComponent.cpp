@@ -68,6 +68,7 @@ void UResourceComponent::AddStamina(float InValue)
 	{
 		CurrentStamina = 0.0f;
 		// 델리게이트로 스태미너가 떨어졌음을 알림
+		OnStaminaEmpty.Broadcast();
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Stamina : %.1f"), CurrentStamina);
