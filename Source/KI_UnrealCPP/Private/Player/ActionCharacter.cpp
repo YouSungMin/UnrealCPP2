@@ -53,11 +53,8 @@ void AActionCharacter::BeginPlay()
 void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	if (bIsSprint && !GetVelocity().IsNearlyZero())	// 달리기 모드인 상태에서 움직이면 스태미너를 소비한다.
-	{
-		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스태미너 감소
-	}
+
+	SpendRunStamina(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -157,5 +154,16 @@ void AActionCharacter::SectionJumpForCombo()
 			
 		bComboReady = false;	// 중복실행 방지
 		Resource->AddStamina(-AttackStaminaCost);	// 스태미너 감소
+	}
+}
+
+void AActionCharacter::SpendRunStamina(float DeltaTime)
+{
+	if ((bIsSprint && !GetVelocity().IsNearlyZero())							// 달리기 상태이고 움직이지 않고 있다.			
+		&& (AnimInstance.IsValid() && !AnimInstance->IsAnyMontagePlaying()))	// 어떤 몽타쥬도 재생중이지 않다.(루트모션 때문에 Velocity 변경있음)
+	{
+		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스태미너 감소
+		//UE_LOG(LogTemp, Log, TEXT("Velocity : %s"), *GetVelocity().ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Stamina : %.1f"), Resource->GetCurrentStamina());
 	}
 }
