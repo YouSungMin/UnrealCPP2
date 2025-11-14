@@ -166,4 +166,6 @@ void AActionCharacter::SpendRunStamina(float DeltaTime)
 		//UE_LOG(LogTemp, Log, TEXT("Velocity : %s"), *GetVelocity().ToString());
 		//UE_LOG(LogTemp, Warning, TEXT("Stamina : %.1f"), Resource->GetCurrentStamina());
 	}
+
+	//GetWorld()->GetFirstPlayerController()->GetHUD();
 }
