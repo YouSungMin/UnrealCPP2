@@ -71,6 +71,9 @@ protected:
 	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 private:
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 	// 콤보용 섹션 점프 함수
 	void SectionJumpForCombo();
 
@@ -130,7 +133,10 @@ protected:
 
 	// 플레이어가 현재 가지고 있는 무기
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
-	TWeakObjectPtr<class AWeaponActor> CurrentWeapon = nullptr;
+	TWeakObjectPtr<class AWeaponActor> CurrentWeapon = nullptr;		
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	TMap<EItemCode, TSubclassOf<AActor>> UsedWeapon;
 	
 private:
 	UPROPERTY()
@@ -139,6 +145,10 @@ private:
 	// 현재 진행중인 섹션점프 노티파이 스테이트
 	UPROPERTY()
 	TWeakObjectPtr<UAnimNotifyState_SectionJump> SectionJumpNotify;
+
+	// AllowPrivateAccess 확인용
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon", meta = (AllowPrivateAccess = "true"))
+	//bool bWeaponUseEnded = false;
 
 	// 콤보가 가능한 상황인지 확인하기 위한 플래그
 	bool bComboReady = false;

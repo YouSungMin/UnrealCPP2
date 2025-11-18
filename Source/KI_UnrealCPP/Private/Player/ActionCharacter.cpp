@@ -52,7 +52,7 @@ void AActionCharacter::BeginPlay()
 	
 	if (GetMesh())
 	{
-		AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기
+		AnimInstance = GetMesh()->GetAnimInstance();	// ABP 객체 가져오기		
 	}	
 
 	// 게임 진행 중에 자주 변경되는 값은 시작 시점에서 리셋을 해주는 것이 좋다.
@@ -139,19 +139,30 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 {
-	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost)) // 애님 인스턴스가 있고 스태미너도 충분할 때
+	// 애님 인스턴스가 있고, 스태미너도 충분하고, 현재 무기가 공격을 할 수 있어야 한다.
+	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost)
+		&& (CurrentWeapon.IsValid() && CurrentWeapon->CanAttack())) 
 	{
 		if (!AnimInstance->IsAnyMontagePlaying() )	// 몽타주가 재생 중이 아닐 때
 		{
-			// 첫번째 공격
-			PlayAnimMontage(AttackMontage);
+			// 첫번째 공격			
+			PlayAnimMontage(AttackMontage);	// 몽타주 재생
+
+			FOnMontageEnded onMontageEnded;
+			onMontageEnded.BindUObject(this, &AActionCharacter::OnAttackMontageEnded);
+			AnimInstance->Montage_SetEndDelegate(onMontageEnded);	// 몽타주가 끝났을 때 델리게이트 발송(몽타주 플레이 이후에 등록해야 함)
+
 			Resource->AddStamina(-AttackStaminaCost);	// 스태미너 감소
+			if (CurrentWeapon.IsValid())
+			{
+				CurrentWeapon->OnAttack();	// 무기 공격시 처리(회수 차감)
+			}
 		}
 		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)	// 몽타주가 재생 중인데, AttackMontage가 재생중이면
 		{			
 			// 콤보 공격
-			SectionJumpForCombo();
-		}
+			SectionJumpForCombo();			
+		}		
 	}
 }
 
@@ -188,6 +199,21 @@ void AActionCharacter::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActo
 	}
 }
 
+void AActionCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	// UE_LOG(LogTemp, Log, TEXT("공격 몽타주가 끝남"));
+	if (CurrentWeapon.IsValid() && !CurrentWeapon->CanAttack())	// CurrentWeapon이 공격할 수 없으면(=사용회수가 안남았다)
+	{
+		UE_LOG(LogTemp, Log, TEXT("다쓴 무기 버리기"));
+		TSubclassOf<AActor>* usedClass = UsedWeapon.Find(CurrentWeapon->GetWeaponID());		
+		
+		GetWorld()->SpawnActor<AActor>(
+			*usedClass, 
+			GetActorLocation() + GetActorForwardVector() * 100.0f,
+			FRotator());			// FRotator()를 캐릭터의 forward 방향을 바라보는 회전으로 대체하기
+	}
+}
+
 void AActionCharacter::SectionJumpForCombo()
 {
 	if (SectionJumpNotify.IsValid() && bComboReady)	// SectionJumpNotify가 있고 콤보가 가능한 상태이면
@@ -200,6 +226,10 @@ void AActionCharacter::SectionJumpForCombo()
 			
 		bComboReady = false;	// 중복실행 방지
 		Resource->AddStamina(-AttackStaminaCost);	// 스태미너 감소
+		if (CurrentWeapon.IsValid())
+		{
+			CurrentWeapon->OnAttack();
+		}
 	}
 }
 
