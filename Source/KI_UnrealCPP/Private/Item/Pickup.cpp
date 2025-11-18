@@ -41,12 +41,7 @@ APickup::APickup()
 // Called when the game starts or when spawned
 void APickup::BeginPlay()
 {
-	Super::BeginPlay();
-	
-	if (PickupOverlap)
-	{
-		PickupOverlap->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPickupBeginOverlap);
-	}
+	Super::BeginPlay();	
 
 	if (PickupTimeline)
 	{
@@ -90,16 +85,11 @@ void APickup::OnPickup_Implementation(AActor* Target)
 	}
 }
 
-void APickup::OnPickupBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//UE_LOG(LogTemp, Log, TEXT("Pickup Overlap"));
-}
-
 void APickup::OnTimelineUpdate(float Value)
 {
 	// 타임라인의 정규화 된 진행 시간(0~1)
 	float currentTime = PickupTimeline->GetPlaybackPosition();
-	UE_LOG(LogTemp, Log, TEXT("Timeline : %.2f"), currentTime);
+	//UE_LOG(LogTemp, Log, TEXT("Timeline : %.2f"), currentTime);
 
 	// 커브의 현재 값 받아오기
 	float distanceValue = Value;
@@ -122,5 +112,6 @@ void APickup::OnTimelineFinished()
 	{
 		IInventoryOwner::Execute_AddItem(PickupOwner.Get(), PickupItem);
 	}
+	Destroy();	// 자기 자신 삭제
 }
 
