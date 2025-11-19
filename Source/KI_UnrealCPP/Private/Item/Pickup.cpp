@@ -20,6 +20,8 @@ APickup::APickup()
 	BaseRoot->BodyInstance.bLockXRotation = true;
 	BaseRoot->BodyInstance.bLockYRotation = true;
 	BaseRoot->SetCollisionProfileName(TEXT("BlockAllDynamic"));
+	BaseRoot->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	BaseRoot->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(BaseRoot);
