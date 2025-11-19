@@ -8,13 +8,13 @@ void AConsumableWeapon::OnAttack()
 	RemainingUseCount--;
 	if (RemainingUseCount <= 0)
 	{
-		OnWeaponUseEnded.Broadcast();
+		OnWeaponUseEnded.Broadcast(WeaponID);
 	}
 }
 
-void AConsumableWeapon::OnWeaponPickuped(AActionCharacter* InOwner)
+void AConsumableWeapon::OnWeaponPickuped()
 {
-	Super::OnWeaponPickuped(InOwner);
+	Super::OnWeaponPickuped();
 
 	RemainingUseCount = MaxUseCount;
 }

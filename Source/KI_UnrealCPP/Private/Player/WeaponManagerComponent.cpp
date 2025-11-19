@@ -5,6 +5,7 @@
 #include "Weapon/WeaponActor.h"
 #include "Weapon/UsedWeapon.h"
 #include "Item/Pickup.h"
+#include "Item/Consumable.h"
 
 // Sets default values for this component's properties
 UWeaponManagerComponent::UWeaponManagerComponent()
@@ -16,12 +17,45 @@ UWeaponManagerComponent::UWeaponManagerComponent()
 	// ...
 }
 
+AWeaponActor* UWeaponManagerComponent::GetEquippedWeapon(EItemCode InType) const
+{
+	//if (const TObjectPtr<AWeaponActor>* weapon = WeaponInstances.Find(InType))
+	//{
+	//	return *weapon;
+	//}
+
+	AWeaponActor* weapon = nullptr;
+	if (WeaponInstances.Contains(InType))
+	{
+		weapon = WeaponInstances[InType];
+	}
+
+	return weapon;
+}
+
+TSubclassOf<AUsedWeapon> UWeaponManagerComponent::GetUsedWeaponClass(EItemCode InType) const
+{
+	const UWeaponDataAsset* dataAsset = *WeaponDatabase.Find(InType);
+	return dataAsset->UsedWaeponClass;
+}
+
 
 // Called when the game starts
 void UWeaponManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	OwnerPlayer = Cast<AActionCharacter>(GetOwner());
 
+	ValidateWeaponDatabase();
+	SpawnWeaponInstances();
+
+	OwnerPlayer->EquipWeapon(EItemCode::Sword);
+
+}
+
+void UWeaponManagerComponent::ValidateWeaponDatabase()
+{
 	if (WeaponDatabase.Num() <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("무기 데이터베이스가 비었음!!!"));
@@ -44,6 +78,31 @@ void UWeaponManagerComponent::BeginPlay()
 			}
 		}
 	}
-	
+}
+
+void UWeaponManagerComponent::SpawnWeaponInstances()
+{
+	WeaponInstances.Empty(WeaponDatabase.Num());	// WeaponInstances의 할당 크기를 필요한 만큼만 설정	
+
+	if (OwnerPlayer.IsValid())
+	{
+		UWorld* world = GetWorld();
+		FVector defaultLocation = FVector(0.0f, 0.0f, -10000.0f);
+		for (const auto& pair : WeaponDatabase)
+		{
+			AWeaponActor* weapon = world->SpawnActor<AWeaponActor>(
+				pair.Value->EquippedWeaponClass,
+				defaultLocation,
+				FRotator::ZeroRotator);	// 일단 defaultLocation위치에 생성
+			weapon->AttachToComponent(
+				OwnerPlayer->GetMesh(),
+				FAttachmentTransformRules::KeepWorldTransform,
+				FName("root"));							// 월드아웃라이너에서 확인하기 위해 플레이어 아래에 붙임
+			weapon->SetWeaponOwner(OwnerPlayer.Get());	// 무기의 오너 설정
+			weapon->WeaponActivate(false);				// 무기 비활성화
+			
+			WeaponInstances.Add(pair.Key, weapon);		// 인스턴스 맵에 추가
+		}
+	}
 }
 
