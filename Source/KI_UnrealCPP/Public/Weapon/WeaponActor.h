@@ -24,6 +24,9 @@ protected:
 	UFUNCTION()
 	void OnWeaponBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
+	virtual void OnWeaponActivate() {};
+	virtual void OnWeaponDeactivate() {};
+
 public:	
 	// 무기 자체를 활성화/비활성화 하는 함수(비지빌리티, 충돌 등등)
 	UFUNCTION(BlueprintCallable)

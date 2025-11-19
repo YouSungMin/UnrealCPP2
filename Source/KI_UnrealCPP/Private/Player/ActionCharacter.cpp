@@ -32,6 +32,7 @@ AActionCharacter::AActionCharacter()
 
 	DropLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DropLocation"));
 	DropLocation->SetupAttachment(RootComponent);
+	DropLocation->SetRelativeLocation(FVector(80.0f, 30.0f, 0.0f));
 
 	Resource = CreateDefaultSubobject<UResourceComponent>(TEXT("PlayerResource"));
 	Status = CreateDefaultSubobject<UStatusComponent>(TEXT("PlayerStatus"));
@@ -253,7 +254,8 @@ void AActionCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 	if (CurrentWeapon.IsValid() && !CurrentWeapon->CanAttack())	// CurrentWeapon이 공격할 수 없으면(=사용회수가 안남았다)
 	{
 		//DropUsedWeapon();		
-		DropWeapon(CurrentWeapon->GetWeaponID());
+		DropWeapon(CurrentWeapon->GetWeaponID());	// 현재 사용 중인 무기 버리기
+		EquipWeapon(EItemCode::BasicWeapon);
 	}
 }
 

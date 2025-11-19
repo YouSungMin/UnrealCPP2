@@ -18,3 +18,14 @@ void AConsumableWeapon::OnWeaponPickuped()
 
 	RemainingUseCount = MaxUseCount;
 }
+
+void AConsumableWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	RemainingUseCount = MaxUseCount;
+}
+
+void AConsumableWeapon::OnWeaponActivate()
+{
+	RemainingUseCount = MaxUseCount;
+}

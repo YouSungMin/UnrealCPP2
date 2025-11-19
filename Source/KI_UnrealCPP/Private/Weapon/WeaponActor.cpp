@@ -66,6 +66,8 @@ void AWeaponActor::WeaponActivate(bool bActivate)
 		SetActorHiddenInGame(false);	// 게임에서 보이게 하기
 		//SetActorEnableCollision(true);
 		//SetActorTickEnabled(true);
+
+		OnWeaponActivate();
 	}
 	else
 	{
@@ -78,6 +80,8 @@ void AWeaponActor::WeaponActivate(bool bActivate)
 		SetActorRelativeLocation(FVector(0.0f, 0.0f, -10000.0f));	// 안보이는 곳에 배치
 		//SetActorEnableCollision(false);
 		//SetActorTickEnabled(false);
+
+		OnWeaponDeactivate();
 	}
 
 	// 비지빌리티 - O
