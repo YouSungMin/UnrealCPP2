@@ -12,16 +12,17 @@ void AConsumableWeapon::OnAttack()
 	}
 }
 
-void AConsumableWeapon::OnWeaponPickuped()
+void AConsumableWeapon::OnWeaponPickuped(int InCount)
 {
-	Super::OnWeaponPickuped();
-
-	RemainingUseCount = MaxUseCount;
+	// 현재 사용되는 곳 없음
+	Super::OnWeaponPickuped(InCount);
+	RemainingUseCount = InCount;
 }
 
 void AConsumableWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
 	RemainingUseCount = MaxUseCount;
 }
 

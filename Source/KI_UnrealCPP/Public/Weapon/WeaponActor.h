@@ -46,7 +46,7 @@ public:
 
 	// 무기를 획득했을 때 실행되는 함수
 	UFUNCTION(BlueprintCallable)
-	virtual void OnWeaponPickuped();
+	virtual void OnWeaponPickuped(int InCount);
 
 	virtual void PostInitializeComponents() override;
 
