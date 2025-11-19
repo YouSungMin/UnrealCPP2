@@ -157,14 +157,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
 	TWeakObjectPtr<class AWeaponActor> CurrentWeapon = nullptr;		
 
-	// 사용 다한 무기 액터(순수 장식)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
-	TMap<EItemCode, TSubclassOf<class AUsedWeapon>> UsedWeapons;
-
-	// Pickup할 수 있는 무기 액터
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
-	TMap<EItemCode, TSubclassOf<class APickup>> PickupWeapons;
-	
 private:
 	UPROPERTY()
 	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;
