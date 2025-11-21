@@ -139,6 +139,14 @@ void AActionCharacter::OnAttackEnable(bool bEnable)
 	}
 }
 
+void AActionCharacter::OnWeaponTrailEnable(bool bEnable)
+{
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->TrailEnable(bEnable);
+	}
+}
+
 void AActionCharacter::TestDropUsedWeapon()
 {
 	if (CurrentWeapon.IsValid())

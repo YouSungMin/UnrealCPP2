@@ -36,6 +36,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnable(bool bEnable);
 
+	// 무기 트레일을 활성화/비활성화 하는 함수(나이아가라 켜고 끄기)
+	UFUNCTION(BlueprintCallable)
+	void TrailEnable(bool bEnable);
+
 	// 공격을 했을 때 실행되어야 할 함수
 	UFUNCTION(BlueprintCallable)
 	virtual void OnAttack() {};
