@@ -7,6 +7,8 @@
 #include "Player/StatusComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AWeaponActor::AWeaponActor()
@@ -40,11 +42,16 @@ void AWeaponActor::BeginPlay()
 
 void AWeaponActor::OnWeaponBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {	
+	DamageToTarget(OtherActor);
+}
+
+void AWeaponActor::DamageToTarget(AActor* InTarget)
+{
 	float finalDamage = Damage;
 	AController* instigator = nullptr;
 	if (WeaponOwner.IsValid())
 	{
-		if (WeaponOwner == OtherActor)	// 내가 오버랩될 때는 무시
+		if (WeaponOwner == InTarget)	// 내가 오버랩될 때는 무시
 			return;
 
 		if (WeaponOwner->GetStatusComponent() != nullptr)	// 스테이터스 컴포넌트가 있으면 공격력 가져와서 추가하기
@@ -54,7 +61,82 @@ void AWeaponActor::OnWeaponBeginOverlap(AActor* OverlappedActor, AActor* OtherAc
 		instigator = WeaponOwner->GetController();
 	}
 	//UE_LOG(LogTemp, Log, TEXT("Overlapped : %s"), *OtherActor->GetName());
-	UGameplayStatics::ApplyDamage(OtherActor, finalDamage, instigator, this, DamageType);
+	UGameplayStatics::ApplyDamage(InTarget, finalDamage, instigator, this, DamageType);
+}
+
+void AWeaponActor::DamageToArea()
+{
+	//UE_LOG(LogTemp, Log, TEXT("DamageToArea"));
+	float finalDamage = Damage;
+	AController* instigator = nullptr;
+	if (WeaponOwner.IsValid())
+	{
+		if (WeaponOwner->GetStatusComponent() != nullptr)	// 스테이터스 컴포넌트가 있으면 공격력 가져와서 추가하기
+		{
+			finalDamage += WeaponOwner->GetStatusComponent()->GetAttackPower();
+		}
+		instigator = WeaponOwner->GetController();
+	}
+	finalDamage *= 2.0f;	// 3콤보 공격이라 2배 보너스
+		
+	FVector center = FMath::Lerp(
+		WeaponMesh->GetSocketLocation(TEXT("BladeBase")), 
+		WeaponMesh->GetSocketLocation(TEXT("BladeTip")), 
+		0.5f);
+
+	//UE_LOG(LogTemp, Log, TEXT("[%s][%s]WeaponMesh : %p"), *this->WeaponOwner->GetName(), *this->GetName(), WeaponMesh.Get());
+	//UE_LOG(LogTemp, Log, TEXT("Center : %s"), *center.ToString());
+	
+	// 디버그 정보 그리기
+	DrawDebugSphere(
+		GetWorld(),
+		center,				// 구의 중심점
+		AreaInnerRadius,	// 구의 반지름
+		12,					// 구를 쪼개는 수
+		FColor::Red,		// 색상
+		false,				// 안지워지게 할지
+		DebugDuration,		// 몇초동안 보이게 할지
+		0,					// 그리는 우선순위(0이 제일 앞)
+		1.0f				// 선 두깨
+	);
+
+	DrawDebugSphere(
+		GetWorld(),
+		center,				// 구의 중심점
+		AreaOuterRadius,	// 구의 반지름
+		12,					// 구를 쪼개는 수
+		FColor::Yellow,		// 색상
+		false,				// 안지워지게 할지
+		DebugDuration,		// 몇초동안 보이게 할지
+		0,					// 그리는 우선순위(0이 제일 앞)
+		1.0f				// 선 두깨
+	);
+
+	if (AreaAttackEffect)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			AreaAttackEffect,
+			center,
+			WeaponOwner->GetActorRotation());
+	}
+
+	// 범위로 대미지 주기
+	TArray<AActor*> IgnorActors = { WeaponOwner.Get(), this};
+	UGameplayStatics::ApplyRadialDamageWithFalloff(
+		GetWorld(),
+		finalDamage,
+		Damage,
+		center,
+		AreaInnerRadius,
+		AreaOuterRadius,
+		Falloff,
+		DamageType,
+		IgnorActors,
+		this,
+		WeaponOwner->GetController(),
+		ECollisionChannel::ECC_Pawn
+	);
 }
 
 void AWeaponActor::WeaponActivate(bool bActivate)
