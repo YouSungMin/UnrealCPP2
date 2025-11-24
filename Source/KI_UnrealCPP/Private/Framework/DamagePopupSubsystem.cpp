@@ -23,7 +23,7 @@ void UDamagePopupSubsystem::ShowDamagePopup(float Damage, const FVector& Locatio
 	{
 		// 풀에 사용가능한 액터가 있다.
 		selected = Pool.Pop();
-		selected->SetActorHiddenInGame(false);
+		//selected->SetActorHiddenInGame(false);
 	}
 	else
 	{
@@ -51,9 +51,11 @@ void UDamagePopupSubsystem::ShowDamagePopup(float Damage, const FVector& Locatio
 
 void UDamagePopupSubsystem::ReturnToPool(ADamagePopupActor* ReturnActor)
 {
+	UE_LOG(LogTemp, Log, TEXT("ReturnToPool"));
 	if (IsValid(ReturnActor))
 	{
-		ReturnActor->SetActorHiddenInGame(true);
+		//ReturnActor->SetActorHiddenInGame(true);
+		ReturnActor->SetActorLocation(FVector::UpVector * -10000.0f);
 		Pool.Add(ReturnActor);
 	}
 }
