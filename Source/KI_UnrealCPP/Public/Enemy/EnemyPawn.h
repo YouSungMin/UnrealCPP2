@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Common/CommonStructures.h"
 #include "EnemyPawn.generated.h"
 
 UCLASS()
@@ -32,6 +33,7 @@ private:
 	void OnTakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
 		class AController* InstigatedBy, AActor* DamageCauser);
 
+	void DropItems();
 	void OnDie();
 
 protected:
@@ -51,4 +53,8 @@ private:
 	bool bInvincible = false;
 	FTimerHandle InvincibleTimer;
 	float LastDamage = 0.0f;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drop Items")
+	TArray<FItemDropInfo> DropItemInfo;
 };

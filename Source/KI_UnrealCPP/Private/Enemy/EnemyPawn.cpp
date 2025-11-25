@@ -115,8 +115,13 @@ void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageT
 	}
 }
 
+void AEnemyPawn::DropItems()
+{
+}
+
 void AEnemyPawn::OnDie()
 {
+	DropItems();
 	Destroy();	// 죽었으면 삭제
 }
 
