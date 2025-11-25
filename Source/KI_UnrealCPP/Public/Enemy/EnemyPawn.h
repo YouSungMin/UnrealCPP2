@@ -18,6 +18,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame
@@ -31,6 +32,8 @@ private:
 	void OnTakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
 		class AController* InstigatedBy, AActor* DamageCauser);
 
+	void OnDie();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
@@ -38,6 +41,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USceneComponent> PopupLocation = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UResourceComponent> Resource = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Popup")
 	TSubclassOf<class ADamagePopupActor> DamagePopupClass = nullptr;
+
+private:
+	bool bInvincible = false;
+	FTimerHandle InvincibleTimer;
+	float LastDamage = 0.0f;
 };
