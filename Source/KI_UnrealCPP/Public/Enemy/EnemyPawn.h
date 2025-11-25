@@ -28,6 +28,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void TestDropItem() { DropItems(); };
+
 private:
 	UFUNCTION()
 	void OnTakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
@@ -57,4 +60,7 @@ private:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drop Items")
 	TArray<FItemDropInfo> DropItemInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drop Items")
+	TObjectPtr<class UDataTable> DropItemTable = nullptr;
 };
