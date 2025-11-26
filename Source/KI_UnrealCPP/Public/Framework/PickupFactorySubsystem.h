@@ -8,7 +8,7 @@
 #include "PickupFactorySubsystem.generated.h"
 
 /**
- * 
+ * 픽업 아이템용 팩토리
  */
 UCLASS()
 class KI_UNREALCPP_API UPickupFactorySubsystem : public UWorldSubsystem

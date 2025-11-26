@@ -12,7 +12,7 @@ enum class EItemCode : uint8
 {
 	BasicWeapon		UMETA(DisplayName = "기본무기(도끼)"),
 	Sword			UMETA(DisplayName = "대검"),
-	Hammer			UMETA(DisplayName = "망치"),
+	Hammer			UMETA(DisplayName = "망치"),	
 };
 
 UENUM(BlueprintType)

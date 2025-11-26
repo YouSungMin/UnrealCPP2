@@ -29,7 +29,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable)
-	void TestDropItem() { DropItems(); };
+	void TestDropItem();
 
 private:
 	UFUNCTION()

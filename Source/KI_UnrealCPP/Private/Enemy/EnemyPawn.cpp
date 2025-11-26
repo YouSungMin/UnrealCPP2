@@ -67,6 +67,34 @@ void AEnemyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 }
 
+void AEnemyPawn::TestDropItem()
+{
+	TMap<FName, uint8*> RowMap = DropItemTable->GetRowMap();
+	TArray<int32> counter = { 0,0,0 };
+	//counter.Empty(3);
+
+	for (int i = 0; i < 1000000; i++)
+	{
+		// 중복으로 당첨 가능(아무것도 안나올 수도 있음)
+		int index = 0;
+		for (const auto& element : RowMap)
+		{
+			FDropItemData_v2_TableRow* row = (FDropItemData_v2_TableRow*)element.Value;
+			if (FMath::FRand() <= row->DropRate)
+			{
+				counter[index]++;
+			}			
+
+			index++;
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Test count : 100만"));
+	UE_LOG(LogTemp, Log, TEXT("index 0 : %d"), counter[0]);
+	UE_LOG(LogTemp, Log, TEXT("index 1 : %d"), counter[1]);
+	UE_LOG(LogTemp, Log, TEXT("index 2 : %d"), counter[2]);
+}
+
 void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	//GEngine->AddOnScreenDebugMessage()
