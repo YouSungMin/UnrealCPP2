@@ -67,7 +67,7 @@ void AEnemyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 }
 
-void AEnemyPawn::TestDropItem()
+void AEnemyPawn::TestDropItemCounts()
 {
 	TMap<FName, uint8*> RowMap = DropItemTable->GetRowMap();
 	TArray<int32> counter = { 0,0,0 };
@@ -146,7 +146,7 @@ void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageT
 	}
 }
 
-void AEnemyPawn::DropItems()
+void AEnemyPawn::DropItems(float BonusChange)
 {
 	//for (const auto& item : DropItemInfo)
 	//{
@@ -167,7 +167,7 @@ void AEnemyPawn::DropItems()
 		{
 			pickup = nullptr;
 			FDropItemData_v2_TableRow* row = (FDropItemData_v2_TableRow*)element.Value;
-			if (FMath::FRand() <= row->DropRate)
+			if (FMath::FRand() - BonusChange <= row->DropRate)
 			{
 				//pickup = GetWorld()->SpawnActor<APickup>(
 				//	row->DropItemClass,
@@ -176,9 +176,19 @@ void AEnemyPawn::DropItems()
 
 				pickup = GetWorld()->GetSubsystem<UPickupFactorySubsystem>()->SpawnPickup(
 					row->PickupCode,
-					GetActorLocation() + FVector::UpVector * 200.0f,
+					PopupLocation->GetComponentLocation(),
 					GetActorRotation()
 				);
+
+				FVector LaunchVelocity = FVector::UpVector * 500.0f;
+				LaunchVelocity = LaunchVelocity.RotateAngleAxis(FMath::FRandRange(-15.0f, 15.0f), FVector::RightVector);
+				LaunchVelocity = LaunchVelocity.RotateAngleAxis(FMath::FRandRange(0.0f, 360.0f), FVector::UpVector);
+				DrawDebugLine(
+					GetWorld(), 
+					PopupLocation->GetComponentLocation(), 
+					PopupLocation->GetComponentLocation() + LaunchVelocity,
+					FColor::Green, false, 3.0f );
+				pickup->AddImpulse(LaunchVelocity);
 			}
 			if (pickup)
 			{
