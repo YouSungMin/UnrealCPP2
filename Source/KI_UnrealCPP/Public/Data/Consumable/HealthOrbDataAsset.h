@@ -3,19 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Item/PickupConsumable.h"
-#include "PickupConsumableHealthOrb.generated.h"
+#include "Data/Consumable/ConsumableDataAsset.h"
+#include "HealthOrbDataAsset.generated.h"
 
 /**
- * 파생 클래스 예시
+ * 
  */
 UCLASS()
-class KI_UNREALCPP_API APickupConsumableHealthOrb : public APickupConsumable
+class KI_UNREALCPP_API UHealthOrbDataAsset : public UConsumableDataAsset
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealOrb")
 	float HealAmount = 30.0f;
 protected:
-	virtual void OnConsume()override;
+	virtual void Excute(AActor* InTarget) const override;
+	
 };

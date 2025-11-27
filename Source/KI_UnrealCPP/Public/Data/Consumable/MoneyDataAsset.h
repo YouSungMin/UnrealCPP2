@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Item/PickupConsumable.h"
-#include "PickupConsumableMoney.generated.h"
+#include "Data/Consumable/ConsumableDataAsset.h"
+#include "MoneyDataAsset.generated.h"
 
 /**
- * 파생 클래스 예시
+ * 
  */
 UCLASS()
-class KI_UNREALCPP_API APickupConsumableMoney : public APickupConsumable
+class KI_UNREALCPP_API UMoneyDataAsset : public UConsumableDataAsset
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
 	int32 Money = 100;
 protected:
-	virtual void OnConsume()override;
+	virtual void Excute(AActor* InTarget) const override;
 };
