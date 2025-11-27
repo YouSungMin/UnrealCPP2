@@ -30,7 +30,7 @@ APickup::APickup()
 
 	PickupOverlap = CreateDefaultSubobject<USphereComponent>(TEXT("Overlap"));
 	PickupOverlap->SetupAttachment(BaseRoot);
-	PickupOverlap->InitSphereRadius(100.0f);
+	PickupOverlap->InitSphereRadius(200.0f);
 	//PickupOverlap->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));	// 생성 직후는 바로 먹을 수 없다.
 	PickupOverlap->SetCollisionProfileName(TEXT("NoCollision"));
 

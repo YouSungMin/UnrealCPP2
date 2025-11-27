@@ -6,7 +6,8 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
-#include "InventoryOwner.h"
+#include "Player/InventoryOwner.h"
+#include "Player/HasHealth.h"
 #include "ActionCharacter.generated.h"
 
 class UInputAction;
@@ -16,7 +17,7 @@ class UStatusComponent;
 //class UAnimNotifyState_SectionJump;
 
 UCLASS()
-class KI_UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner
+class KI_UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, public IHasHealth
 {
 	GENERATED_BODY()
 
@@ -38,6 +39,12 @@ public:
 	// 아이템 추가 인터페이스 함수 구현
 	virtual void AddItem_Implementation(EItemCode Code, int32 ItemCount)override;
 	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount)override;
+	virtual void AddMoney_Implementation(int32 Incom)override;
+	virtual void RemoveMoney_Implementation(int32 Expense)override;
+
+	// IHasHealth 인터페이스 함수 구현
+	virtual void HealHealth_Implementation(float InHeal)override;
+	virtual void DamageHealth_Implementation(float InDamage)override;
 
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")

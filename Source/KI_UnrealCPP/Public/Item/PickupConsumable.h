@@ -13,5 +13,8 @@ UCLASS()
 class KI_UNREALCPP_API APickupConsumable : public APickup
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void OnPickupComplete_Implementation() override;
+protected:
+	virtual void OnConsume() {};
 };

@@ -16,7 +16,8 @@ enum class EItemCode : uint8
 	Figure			UMETA(DisplayName = "황금상"),
 	Crown			UMETA(DisplayName = "왕관"),
 	PotionHealth	UMETA(DisplayName = "힐링 포션"),
-	PotionStamina	UMETA(DisplayName = "스태미너 포션")
+	PotionStamina	UMETA(DisplayName = "스태미너 포션"),
+	HealthOrb		UMETA(DisplayName = "힐 오브")
 };
 
 UENUM(BlueprintType)
