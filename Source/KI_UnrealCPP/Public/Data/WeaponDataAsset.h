@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Common/CommonEnums.h"
+#include "Item/PickupWeapon.h"
 #include "WeaponDataAsset.generated.h"
 
 class AWeaponActor;
 class AUsedWeapon;
-class APickup;
+//class APickupWeapon;
 /**
  * 
  */
@@ -33,7 +34,7 @@ public:
 
 	// 픽업 가능한 액터(바닥에 버리는 용도, 무기 획득용)
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Actor Classes")
-	TSubclassOf<APickup> PickupWeaponClass;
+	TSubclassOf<APickupWeapon> PickupWeaponClass;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Weapon")
 	bool IsValid() const

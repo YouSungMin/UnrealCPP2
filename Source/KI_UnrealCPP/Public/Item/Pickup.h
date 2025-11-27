@@ -25,13 +25,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// IPickupable의 구현
+	// IPickupable의 구현(먹기 시작할 때 실행되는 함수)
 	virtual void OnPickup_Implementation(AActor* Target) override;
+
+	// IPickupable의 구현(먹기가 완료되었을 때 실행되는 함수)
+	virtual void OnPickupComplete_Implementation() override;
 
 	// 픽업에 힘을 가해서 날리는 함수
 	void AddImpulse(FVector& Velocity);
-
-	inline void SetPickupCount(int32 InCount) { PickupCount = InCount; }
 
 private:
 	UFUNCTION()
@@ -61,12 +62,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UTimelineComponent> PickupTimeline = nullptr;
 
-	// 이 픽업을 먹었을 때 얻을 아이템
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	EItemCode PickupItem = EItemCode::BasicWeapon;
+	//// 이 픽업을 먹었을 때 얻을 아이템
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	//EItemCode PickupItem = EItemCode::BasicWeapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
-	int32 PickupCount = 1;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	//int32 PickupCount = 1;
 
 	// 스폰 후에 먹을 수 있기 될 때까지의 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
@@ -96,9 +97,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float PickupHeight = 50.0f;
 
-private:
 	// 이 픽업 아이템을 먹은 액터
+	UPROPERTY()
 	TWeakObjectPtr<AActor> PickupOwner = nullptr;
+private:
 
 	// 획득 되었는지 여부(true면 획득 처리 중)
 	bool bPickuped = false;
