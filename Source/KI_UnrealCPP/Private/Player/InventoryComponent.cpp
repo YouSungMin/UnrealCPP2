@@ -66,7 +66,7 @@ int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 
 void UInventoryComponent::SetItemIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount)
 {
-	if (IsVaildIndex(InSlotIndex))
+	if (IsValidIndex(InSlotIndex))
 	{
 		FInvenSlot& TargetSlot = Slots[InSlotIndex];
 
@@ -77,7 +77,7 @@ void UInventoryComponent::SetItemIndex(int32 InSlotIndex, UItemDataAsset* InItem
 
 void UInventoryComponent::UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount)
 {
-	if (IsVaildIndex(InSlotIndex))
+	if (IsValidIndex(InSlotIndex))
 	{
 		FInvenSlot& TargetSlot = Slots[InSlotIndex];
 
@@ -88,9 +88,9 @@ void UInventoryComponent::UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount)
 	}
 }
 
-void UInventoryComponent::CleearSlotAtIndex(int32 InSlotIndex)
+void UInventoryComponent::ClearSlotAtIndex(int32 InSlotIndex)
 {
-	if (IsVaildIndex(InSlotIndex))
+	if (IsValidIndex(InSlotIndex))
 	{
 		FInvenSlot& TargetSlot = Slots[InSlotIndex];
 		TargetSlot.Clear();
@@ -99,7 +99,7 @@ void UInventoryComponent::CleearSlotAtIndex(int32 InSlotIndex)
 
 const FInvenSlot& UInventoryComponent::GetSlotData(int32 InSlotIndex) const
 {
-	check(IsVaildIndex(InSlotIndex));
+	check(IsValidIndex(InSlotIndex));
 
 
 	return Slots[InSlotIndex];
