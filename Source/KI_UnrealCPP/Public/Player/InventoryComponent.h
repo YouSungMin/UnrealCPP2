@@ -83,7 +83,7 @@ public:
 	const FInvenSlot& GetSlotData(int32 InSlotIndex) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	inline bool IsValidIndex(int32 InSlotIndex) const { return InSlotIndex < InventorySize  && InSlotIndex >= 0; }
+	inline bool IsValidIndex(int32 InSlotIndex) const { return InSlotIndex < InventorySize && InSlotIndex >= 0; }
 
 
 protected:

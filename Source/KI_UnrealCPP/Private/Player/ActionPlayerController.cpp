@@ -30,6 +30,7 @@ void AActionPlayerController::SetupInputComponent()
 	{
 		//UE_LOG(LogTemp, Log, TEXT("바인드 성공"));
 		enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AActionPlayerController::OnLookInput);
+		enhanced->BindAction(IA_InventoryOnOff, ETriggerEvent::Started, this, &AActionPlayerController::OnInventoryOnOff);
 	}
 }
 
@@ -39,4 +40,39 @@ void AActionPlayerController::OnLookInput(const FInputActionValue& InValue)
 	//UE_LOG(LogTemp, Log, TEXT("OnLookInput : %s"), *lookAxis.ToString());
 	AddYawInput(lookAxis.X);
 	AddPitchInput(lookAxis.Y);
+}
+
+void AActionPlayerController::OnInventoryOnOff()
+{
+	if (MainHudWiget.IsValid())
+	{
+		if (MainHudWiget->GetOpenState() == EOpenState::Open)
+		{
+			CloseInventoryWidget();
+		}
+		else
+		{
+			OpenInventoryWidget();
+		}
+	}
+}
+
+void AActionPlayerController::OpenInventoryWidget()
+{
+	if (MainHudWiget.IsValid())
+	{
+		MainHudWiget->OpenInventory();
+
+		bShowMouseCursor = true;
+	}
+}
+
+void AActionPlayerController::CloseInventoryWidget()
+{
+	if (MainHudWiget.IsValid())
+	{
+		bShowMouseCursor = false;
+
+		MainHudWiget->CloseInventory();
+	}
 }
