@@ -23,7 +23,9 @@ class KI_UNREALCPP_API AActionPlayerController : public APlayerController
 
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void OnPossess(APawn* aPawn)override;
+	virtual void OnUnPossess()override;
+	
 public:
 
 	virtual void SetupInputComponent() override;
@@ -31,7 +33,7 @@ public:
 	UFUNCTION()
 	void CloseInventoryWidget();
 
-	inline void SetMainHudWidget(UMainHudWidget* widget) { MainHudWiget = widget; }
+	inline void InitializeMainHudWidget(UMainHudWidget* InWidget);
 private:
 	void OnLookInput(const FInputActionValue& InValue);
 	void OnInventoryOnOff();
@@ -53,5 +55,7 @@ protected:
 
 private:
 	int32 GameInputPriority = 1;
-	TWeakObjectPtr<UMainHudWidget> MainHudWiget = nullptr;
+	TWeakObjectPtr<UMainHudWidget> MainHudWidget = nullptr;
+	TWeakObjectPtr<UInventoryWindowWidget> InventoryWidget = nullptr;
+	TWeakObjectPtr<class UInventoryComponent> InventoryComponent = nullptr;
 };

@@ -5,6 +5,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubSystems.h"
 #include "InputMappingContext.h"
+#include "Player/InventoryComponent.h"
+#include "Player/ActionCharacter.h"
 
 void AActionPlayerController::BeginPlay()
 {
@@ -19,6 +21,32 @@ void AActionPlayerController::BeginPlay()
 
 	PlayerCameraManager->ViewPitchMax = VewPitchMax;
 	PlayerCameraManager->ViewPitchMin = VewPitchMin;
+}
+
+void AActionPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+
+	AActionCharacter* player = Cast<AActionCharacter>(aPawn);
+	if (player)
+	{
+		InventoryComponent = player->GetInventoryComponent();
+		if (InventoryWidget.IsValid())
+		{
+			InventoryWidget->InitializeInventoryWidget(InventoryComponent.Get());
+		}
+	}
+}
+
+void AActionPlayerController::OnUnPossess()
+{
+	if (InventoryWidget.IsValid())
+	{
+		InventoryWidget->ClearInventoryWidget();
+	}
+	InventoryComponent = nullptr;
+
+	Super::OnUnPossess();
 }
 
 void AActionPlayerController::SetupInputComponent()
@@ -44,9 +72,9 @@ void AActionPlayerController::OnLookInput(const FInputActionValue& InValue)
 
 void AActionPlayerController::OnInventoryOnOff()
 {
-	if (MainHudWiget.IsValid())
+	if (MainHudWidget.IsValid())
 	{
-		if (MainHudWiget->GetOpenState() == EOpenState::Open)
+		if (MainHudWidget->GetOpenState() == EOpenState::Open)
 		{
 			CloseInventoryWidget();
 		}
@@ -59,12 +87,12 @@ void AActionPlayerController::OnInventoryOnOff()
 
 void AActionPlayerController::OpenInventoryWidget()
 {
-	if (MainHudWiget.IsValid())
+	if (MainHudWidget.IsValid())
 	{
-		MainHudWiget->OpenInventory();
+		MainHudWidget->OpenInventory();
 
 		FInputModeGameAndUI inputMode;
-		inputMode.SetWidgetToFocus(MainHudWiget->TakeWidget());		// 위젯에 포커스 주기
+		inputMode.SetWidgetToFocus(MainHudWidget->TakeWidget());		// 위젯에 포커스 주기
 		inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);	// 마우스 커서가 뷰포트를 벗어날 수 있게 설정
 		inputMode.SetHideCursorDuringCapture(false);	// 마우스가 눌러졌을 때도 커서가 보이도록 설정
 		SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
@@ -74,24 +102,44 @@ void AActionPlayerController::OpenInventoryWidget()
 		SetIgnoreMoveInput(true);
 		SetIgnoreLookInput(true);
 
-		SetPause(true); 
+		//SetPause(true); 
 	}
 }
 
 void AActionPlayerController::CloseInventoryWidget()
 {
-	if (MainHudWiget.IsValid())
+	if (MainHudWidget.IsValid())
 	{
 		SetIgnoreMoveInput(false);
 		SetIgnoreLookInput(false);
 
-		SetPause(false);
+		//SetPause(false);
 
 		FInputModeGameOnly inputMode;
 		SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
 
 		bShowMouseCursor = false;
 
-		MainHudWiget->CloseInventory();
+		MainHudWidget->CloseInventory();
+	}
+}
+
+inline void AActionPlayerController::InitializeMainHudWidget(UMainHudWidget* InWidget)
+{
+	if (InWidget)
+	{
+		MainHudWidget = InWidget;
+
+		// MainHudwidget의 Inventory의 닫힘 델리게이트에 함수 연결
+		FScriptDelegate delegate;
+		delegate.BindUFunction(this, "CloseInventoryWidget");
+		MainHudWidget->AddToInventoryCloseDelegate(delegate);
+
+		InventoryWidget = MainHudWidget->GetInventoryWidget();
+
+		if (InventoryWidget.IsValid())
+		{
+			InventoryWidget->InitializeInventoryWidget(InventoryComponent.Get());
+		}
 	}
 }

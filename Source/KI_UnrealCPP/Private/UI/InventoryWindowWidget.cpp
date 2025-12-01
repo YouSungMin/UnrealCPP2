@@ -2,9 +2,10 @@
 
 
 #include "UI/InventoryWindowWidget.h"
-#include "Player/ActionCharacter.h"
+#include "UI/InventorySlotWidget.h"
 #include "Player/InventoryComponent.h"
 #include "UI/InventorySlotWidget.h"
+#include "Components/UniformGridPanel.h"
 #include "Components/Button.h"
 
 void UInventoryWindowWidget::NativeConstruct()
@@ -15,35 +16,52 @@ void UInventoryWindowWidget::NativeConstruct()
     {
         CloseButton->OnClicked.AddDynamic(this, &UInventoryWindowWidget::OnCloseClicked);
     }
+
+}
+
+void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* InventoryComponent)
+{
+    if (InventoryComponent)
+    {
+        TargetInventory = InventoryComponent;
+        if (TargetInventory.IsValid())
+        {
+            UE_LOG(LogTemp,Log,TEXT("인벤토리 위젯 초기화"));
+
+            if (SlotGridPanel->GetChildrenCount() != TargetInventory->GetInventorySize())
+            {
+                UE_LOG(LogTemp,Log,TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다."));  
+                return;
+            }
+
+            int32 size = FMath::Min(SlotGridPanel->GetChildrenCount(), TargetInventory->GetInventorySize());
+            SlotWidgets.Empty(size);
+            for (int i = 0; i < TargetInventory->GetInventorySize(); i++)
+            {
+                FInvenSlot* slotData = TargetInventory->GetSlotData(i);
+                UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
+                slotWidget->InitializeSlot(i, slotData);
+                SlotWidgets.Add(slotWidget);
+            }
+        }
+    }
+}
+
+void UInventoryWindowWidget::RefreshInventoryWidget()
+{ 
+    for(const UInventorySlotWidget* slot : SlotWidgets)
+    {
+        slot->RefreshSlot();
+    }
+
+}
+
+void UInventoryWindowWidget::ClearInventoryWidget()
+{
+    TargetInventory = nullptr;
 }
 
 void UInventoryWindowWidget::OnCloseClicked()
 {
     OnInventoryCloseRequested.Broadcast();
 }
-
-//void UInventoryWindowWidget::UpdateInventoryUI(const TArray<FInvenSlot> InSlots)
-//{
-//    //// 슬롯 위젯 배열 (Slot_0 ~ Slot_3)
-//    //UInventorySlotWidget* SlotWidgets[4] = { Slot1.Get(), Slot2.Get(), Slot3.Get(), Slot4.Get() };
-//
-//    //for (int32 i = 0; i < 4; i++)
-//    //{
-//    //    // 1. 위젯이 존재하고, 데이터 배열 범위 내인지 확인
-//    //    if (SlotWidgets[i] && InSlots.IsValidIndex(i))
-//    //    {
-//    //        const FInvenSlot& SlotData = InSlots[i];
-//
-//    //        // 2. 작성하신 IsEmpty() 함수 활용
-//    //        if (!SlotData.IsEmpty() && SlotData.ItemData != nullptr)
-//    //        {
-//    //            // 아이템이 있으면: 데이터 에셋의 아이콘 + 현재 스택 수량 표시
-//    //            SlotWidgets[i]->UpdateSlot(SlotData.ItemData->ItemIcon, SlotData.GetCount());
-//    //        }
-//    //        else
-//    //        {
-//    //            SlotWidgets[i]->UpdateSlot(nullptr, 0);
-//    //        }
-//    //    }// Fill out your copyright notice in the Description page of Project Settings.
-//    //}
-//}

@@ -60,10 +60,6 @@ public:
 	// 이벤토리 내부에서 각종 함수가 실패했을떄 리턴하는 상수
 	static const int32 InventoryFail = -1;
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 public:
 	// 아이템을 추가하는 함수( return :못먹은 아이템의 수, InItemData : 추가되는 아이템의 종류, InCount 추가되는 아이템 갯수)
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -79,16 +75,16 @@ public:
 	void ClearSlotAtIndex(int32 InSlotIndex);
 
 	// 특정 슬롯을 확인하기 위한 함수, 읽기 전용(InSlotIndex : 확인 할 슬롯)
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	const FInvenSlot& GetSlotData(int32 InSlotIndex) const;
+	FInvenSlot* GetSlotData(int32 InSlotIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	inline bool IsValidIndex(int32 InSlotIndex) const { return InSlotIndex < InventorySize && InSlotIndex >= 0; }
 
+	inline int32 GetInventorySize() const { return InventorySize; }
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-	int32 InventorySize = 4;
+	int32 InventorySize = 10;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<FInvenSlot> Slots;

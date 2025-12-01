@@ -18,6 +18,9 @@ class KI_UNREALCPP_API UInventoryWindowWidget : public UUserWidget
 public:
 	virtual void NativeConstruct()override;
 
+	void InitializeInventoryWidget(class UInventoryComponent* InventoryComponent);
+	void RefreshInventoryWidget();
+	void ClearInventoryWidget();
 	UPROPERTY(BlueprintAssignable, Category = "UI|Inventory");
 	FOnIventoryCloseRequested OnInventoryCloseRequested;
 	//void UpdateInventoryUI(const TArray<struct FInvenSlot> InSlots);
@@ -30,15 +33,11 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> CloseButton = nullptr;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (BindWidget))
-	//TWeakObjectPtr<class UInventorySlotWidget> Slot1;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUniformGridPanel> SlotGridPanel = nullptr;
+private:
+	UPROPERTY()
+	TWeakObjectPtr<UInventoryComponent> TargetInventory = nullptr;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (BindWidget))
-	//TWeakObjectPtr<class UInventorySlotWidget> Slot2;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (BindWidget))
-	//TWeakObjectPtr<class UInventorySlotWidget> Slot3;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (BindWidget))
-	//TWeakObjectPtr<class UInventorySlotWidget> Slot4;
+	TArray<TObjectPtr<class UInventorySlotWidget>> SlotWidgets;
 };

@@ -39,6 +39,7 @@ public:
 	}
 
 	inline EOpenState GetOpenState() const { return OpenState;} 
+	inline UInventoryWindowWidget* GetInventoryWidget() const {return Inventory;}
 
 protected:
 	// meta = (BindWidget)

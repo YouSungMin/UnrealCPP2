@@ -11,14 +11,6 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
-}
-
-
-// Called when the game starts
-void UInventoryComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
 	Slots.SetNum(InventorySize);
 }
 
@@ -97,12 +89,12 @@ void UInventoryComponent::ClearSlotAtIndex(int32 InSlotIndex)
 	}
 }
 
-const FInvenSlot& UInventoryComponent::GetSlotData(int32 InSlotIndex) const
+FInvenSlot* UInventoryComponent::GetSlotData(int32 InSlotIndex)
 {
 	check(IsValidIndex(InSlotIndex));
 
-
-	return Slots[InSlotIndex];
+	
+	return &Slots[InSlotIndex];
 }
 
 int32 UInventoryComponent::FindSlotWithItem(UItemDataAsset* InItemData, int32 InStartIndex)
