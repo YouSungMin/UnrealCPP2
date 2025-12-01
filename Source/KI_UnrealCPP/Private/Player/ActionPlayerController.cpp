@@ -63,7 +63,18 @@ void AActionPlayerController::OpenInventoryWidget()
 	{
 		MainHudWiget->OpenInventory();
 
+		FInputModeGameAndUI inputMode;
+		inputMode.SetWidgetToFocus(MainHudWiget->TakeWidget());		// 위젯에 포커스 주기
+		inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);	// 마우스 커서가 뷰포트를 벗어날 수 있게 설정
+		inputMode.SetHideCursorDuringCapture(false);	// 마우스가 눌러졌을 때도 커서가 보이도록 설정
+		SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
+
 		bShowMouseCursor = true;
+
+		SetIgnoreMoveInput(true);
+		SetIgnoreLookInput(true);
+
+		SetPause(true); 
 	}
 }
 
@@ -71,6 +82,14 @@ void AActionPlayerController::CloseInventoryWidget()
 {
 	if (MainHudWiget.IsValid())
 	{
+		SetIgnoreMoveInput(false);
+		SetIgnoreLookInput(false);
+
+		SetPause(false);
+
+		FInputModeGameOnly inputMode;
+		SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
+
 		bShowMouseCursor = false;
 
 		MainHudWiget->CloseInventory();
