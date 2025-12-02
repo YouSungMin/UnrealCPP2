@@ -29,11 +29,17 @@ protected:
 public:
 
 	virtual void SetupInputComponent() override;
+
 	void OpenInventoryWidget();
+
 	UFUNCTION()
 	void CloseInventoryWidget();
 
 	inline void InitializeMainHudWidget(UMainHudWidget* InWidget);
+
+	UFUNCTION(BlueprintCallable, Category = "UI|Inventory")
+	void TestChangeInventoryTarget(UInventoryComponent* NewTarget);
+
 private:
 	void OnLookInput(const FInputActionValue& InValue);
 	void OnInventoryOnOff();
