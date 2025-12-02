@@ -5,6 +5,7 @@
 #include "UI/InventorySlotWidget.h"
 #include "UI/InventorySlotWidget.h"
 #include "UI/GoldPanelWidget.h"
+#include "UI/InventoryDragDropOperation.h"
 #include "Player/InventoryComponent.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/Button.h"
@@ -78,6 +79,19 @@ void UInventoryWindowWidget::RefreshMoneyPanel(int32 CurrentMoney)
 void UInventoryWindowWidget::ClearInventoryWidget()
 {
     TargetInventory = nullptr;
+}
+
+bool UInventoryWindowWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+    UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
+
+    if (invenOp)
+    {
+        UE_LOG(LogTemp,Log,TEXT("인벤토리에 드랍 : 원래 슬롯으로 아이템이 돌아가야 한다"));
+        return true;
+
+     }
+    return false;
 }
 
 void UInventoryWindowWidget::OnCloseClicked()

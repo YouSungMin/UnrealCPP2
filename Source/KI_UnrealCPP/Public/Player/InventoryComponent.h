@@ -102,8 +102,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory|Slot")
 	TArray<FInvenSlot> Slots;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory|Money")
-	int32 Money = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Money")
+	int32 Money = 0;
 private:
 	// 아이템을 특정칸에 추가하는 함수 (초기화, 로딩 등에 사용)
 	// InSlotIndex : 아이템에 추가될 슬롯, InItemData : 추가되는 아이템의 종류, InCount 추가되는 아이템 갯수

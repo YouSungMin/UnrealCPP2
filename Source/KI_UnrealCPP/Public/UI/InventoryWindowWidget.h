@@ -33,6 +33,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "UI|Inventory");
 	FOnIventoryCloseRequested OnInventoryCloseRequested;
 	//void UpdateInventoryUI(const TArray<struct FInvenSlot> InSlots);
+protected:
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
 
 private:
 	UFUNCTION()
