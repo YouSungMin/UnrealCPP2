@@ -2,6 +2,7 @@
 
 
 #include "Player/InventoryComponent.h"
+#include "Data/Usable/UsableItem.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -34,7 +35,7 @@ int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 			if (availableCount > 0)	//  추가가 가능하면
 			{
 				int32 amountToAdd = FMath::Min(availableCount, remainingCount);		// 추가량 결정
-				SetItemIndex(foundIndex,InItemData,slot.GetCount()+ amountToAdd);	// 결정된 추가량 만큼 추가
+				SetItemAtIndex(foundIndex,InItemData,slot.GetCount()+ amountToAdd);	// 결정된 추가량 만큼 추가
 				remainingCount -= amountToAdd; //remainingCount를 슬롯에 추가한 만큼 감소
 			}
 			startIndex = foundIndex +1; //FindSlotWithItem에서 현재 슬롯 다음부터 찾게 하기
@@ -47,7 +48,7 @@ int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 				break; // 빈슬롯이 없다.
 
 			int32 amountToAdd = FMath::Min(InItemData->ItemMaxStackCount, remainingCount);	// 추가량 결정
-			SetItemIndex(emptyIndex, InItemData, amountToAdd);	// 결정된 추가량 만큼 추가
+			SetItemAtIndex(emptyIndex, InItemData, amountToAdd);	// 결정된 추가량 만큼 추가
 			remainingCount -= amountToAdd; //remainingCount를 슬롯에 추가한 만큼 감소
 		}
 
@@ -56,7 +57,24 @@ int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 	return remainingCount;
 }
 
-void UInventoryComponent::SetItemIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount)
+void UInventoryComponent::UseItem(int32 InUseIndex)
+{
+	UE_LOG(LogTemp,Log,TEXT("Inven %d Slot : 사용됨"),InUseIndex);
+	FInvenSlot* slot = GetSlotData(InUseIndex);
+	
+	if (slot->ItemData && slot->ItemData->Implements<UUsableItem>())
+	{
+		IUsableItem::Execute_UseItem(slot->ItemData, this->GetOwner());
+
+		UpdateSlotCount(InUseIndex, -1);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Inven %d Slot : 비어있거나 사용할 수 없는 아이템"), InUseIndex);
+	}
+}
+
+void UInventoryComponent::SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount)
 {
 	if (IsValidIndex(InSlotIndex))
 	{
@@ -76,17 +94,21 @@ void UInventoryComponent::UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount)
 		if (TargetSlot.IsEmpty()) return;	// 슬롯이 비어있으면 변화할 수 없음
 
 		int32 NewCount = TargetSlot.GetCount() + InDeltaCount;
-		SetItemIndex(InSlotIndex, TargetSlot.ItemData, NewCount);
+		SetItemAtIndex(InSlotIndex, TargetSlot.ItemData, NewCount);
+
+		OnInventorySlotChanged.ExecuteIfBound(InSlotIndex);
 	}
 }
 
 void UInventoryComponent::ClearSlotAtIndex(int32 InSlotIndex)
 {
-	if (IsValidIndex(InSlotIndex))
-	{
-		FInvenSlot& TargetSlot = Slots[InSlotIndex];
-		TargetSlot.Clear();
-	}
+	//if (IsValidIndex(InSlotIndex))
+	//{
+	//	FInvenSlot& TargetSlot = Slots[InSlotIndex];
+	//	TargetSlot.Clear();
+	//	OnInventorySlotChanged.ExecuteIfBound(InSlotIndex);
+	//}
+	SetItemAtIndex(InSlotIndex, nullptr, 0);
 }
 
 FInvenSlot* UInventoryComponent::GetSlotData(int32 InSlotIndex)

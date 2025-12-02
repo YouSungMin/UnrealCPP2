@@ -45,6 +45,8 @@ protected:
 	int32 Count = 0;
 };
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventorySlotChanged, int32, InIndex);
+
 // 여러개의 아이템 슬롯을 가진다.
 // 하나의 슬롯에는 한종류의 아이템만 들어간다.
 // 아이템 종류에 따라 한 슬롯에 중첩될 수 있는 아이템 갯수가 달라질수 있다.
@@ -60,10 +62,16 @@ public:
 	// 이벤토리 내부에서 각종 함수가 실패했을떄 리턴하는 상수
 	static const int32 InventoryFail = -1;
 
+	// 인벤토리에서 특정 슬롯에서 변화가 있었을 때 호출되는 델리게이트
+	FOnInventorySlotChanged OnInventorySlotChanged;
+
 public:
 	// 아이템을 추가하는 함수( return :못먹은 아이템의 수, InItemData : 추가되는 아이템의 종류, InCount 추가되는 아이템 갯수)
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	int32 AddItem(UItemDataAsset* InItemData, int32 InCount);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void UseItem(int32 InUseIndex);
 
 	// 특정 칸에 있는 아이템의 갯수를 조절하는 함수(증가/감소)
 	// InSlotIndex : 변경할 슬롯, InDeltaCount : 변화량
@@ -91,7 +99,7 @@ protected:
 private:
 	// 아이템을 특정칸에 추가하는 함수 (초기화, 로딩 등에 사용)
 	// InSlotIndex : 아이템에 추가될 슬롯, InItemData : 추가되는 아이템의 종류, InCount 추가되는 아이템 갯수
-	void SetItemIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount);
+	void SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount);
 
 	// 같은 종류의 아이템이 있는 슬롯을 찾는 함수
 	// InItemData: 비교할 아이템의 종류, InStartIndex : 찾기 시작할 인덱스

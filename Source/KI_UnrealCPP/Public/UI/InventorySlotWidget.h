@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "InventorySlotWidget.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnSlotClicked, int32, InSlotIndex);
+struct FInvenSlot;
 /**
  * 
  */
@@ -22,6 +24,10 @@ public:
 
 protected:
 	void ClearSlotWidget() const;
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+public:
+	FOnSlotClicked OnSlotRightClick;
 protected:
 	// 아이템 소지 갯수 텍스트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|InventorySlot", meta = (BindWidget))

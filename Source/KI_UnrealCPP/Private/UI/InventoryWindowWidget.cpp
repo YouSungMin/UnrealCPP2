@@ -34,6 +34,8 @@ void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* Inve
                 return;
             }
 
+            TargetInventory->OnInventorySlotChanged.BindUFunction(this, "RefreshSlotWidget");
+
             int32 size = FMath::Min(SlotGridPanel->GetChildrenCount(), TargetInventory->GetInventorySize());
             SlotWidgets.Empty(size);
             for (int i = 0; i < TargetInventory->GetInventorySize(); i++)
@@ -41,6 +43,8 @@ void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* Inve
                 FInvenSlot* slotData = TargetInventory->GetSlotData(i);
                 UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
                 slotWidget->InitializeSlot(i, slotData);
+                slotWidget->OnSlotRightClick.Clear();
+                slotWidget->OnSlotRightClick.BindUFunction(TargetInventory.Get(), "UseItem");
                 SlotWidgets.Add(slotWidget);
             }
         }
@@ -54,6 +58,14 @@ void UInventoryWindowWidget::RefreshInventoryWidget()
         slot->RefreshSlot();
     }
 
+}
+
+void UInventoryWindowWidget::RefreshSlotWidget(int32 InSlotIndex)
+{
+    if (IsValidIndex(InSlotIndex))
+    {
+        SlotWidgets[InSlotIndex]->RefreshSlot();
+    }
 }
 
 void UInventoryWindowWidget::ClearInventoryWidget()
