@@ -3,8 +3,9 @@
 
 #include "UI/InventoryWindowWidget.h"
 #include "UI/InventorySlotWidget.h"
-#include "Player/InventoryComponent.h"
 #include "UI/InventorySlotWidget.h"
+#include "UI/GoldPanelWidget.h"
+#include "Player/InventoryComponent.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/Button.h"
 
@@ -33,8 +34,9 @@ void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* Inve
                 UE_LOG(LogTemp,Log,TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다."));  
                 return;
             }
-
+            TargetInventory->OnInventoryMoneyChanged.BindUFunction(this, "RefreshMoneyPanel");
             TargetInventory->OnInventorySlotChanged.BindUFunction(this, "RefreshSlotWidget");
+            RefreshMoneyPanel(0);
 
             int32 size = FMath::Min(SlotGridPanel->GetChildrenCount(), TargetInventory->GetInventorySize());
             SlotWidgets.Empty(size);
@@ -66,6 +68,11 @@ void UInventoryWindowWidget::RefreshSlotWidget(int32 InSlotIndex)
     {
         SlotWidgets[InSlotIndex]->RefreshSlot();
     }
+}
+
+void UInventoryWindowWidget::RefreshMoneyPanel(int32 CurrentMoney)
+{
+    GoldPanel->SetGold(CurrentMoney);
 }
 
 void UInventoryWindowWidget::ClearInventoryWidget()

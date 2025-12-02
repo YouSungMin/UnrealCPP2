@@ -15,6 +15,12 @@ UInventoryComponent::UInventoryComponent()
 	Slots.SetNum(InventorySize);
 }
 
+void UInventoryComponent::AddMoney(int32 InIncome)
+{
+	Money += InIncome;
+	OnInventoryMoneyChanged.ExecuteIfBound(Money);
+}
+
 int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 {
 

@@ -146,12 +146,17 @@ void AActionCharacter::AddWeapon_Implementation(EWeaponCode Code, int32 UseCount
 
 void AActionCharacter::AddMoney_Implementation(int32 Incom)
 {
-	UE_LOG(LogTemp,Log,TEXT("돈 (%d) 골드를 획득했습니다."),Incom);
+	if (Inventory)
+	{
+		Inventory->AddMoney(Incom);
+		//UE_LOG(LogTemp,Log,TEXT("돈 (%d) 골드를 획득했습니다. 현재 골드 : %d"),Incom, Inventory->GetCurrentGold());
+	}
 }
 
 void AActionCharacter::RemoveMoney_Implementation(int32 Expense)
 {
 	UE_LOG(LogTemp,Log,TEXT("돈 (%d) 골드를 획득했습니다."),Expense);
+	
 }
 
 void AActionCharacter::HealHealth_Implementation(float InHeal)
@@ -167,6 +172,14 @@ void AActionCharacter::DamageHealth_Implementation(float InDamage)
 	if (Resource)
 	{
 		Resource->AddHealth(-InDamage);
+	}
+}
+
+void AActionCharacter::RecoveryStamina_Implementation(float InRecovery)
+{
+	if (Resource)
+	{
+		Resource->AddStamina(InRecovery);
 	}
 }
 
