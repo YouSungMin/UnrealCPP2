@@ -8,7 +8,7 @@
 #include "Framework/PickupFactorySubsystem.h"
 #include "UI/InventoryDragDropOperation.h"
 #include "UI/TemporarySlotWidget.h"
-#include "Item/Pickup.h"
+#include "Item/PickupItem.h"
 
 void UInventorySlotWidget::InitializeSlot(UInventoryComponent* InInventoryComponent, int32 InIndex)
 {
@@ -121,12 +121,60 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 {
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
-	if (invenOp)
+	if (invenOp && invenOp->ItemData.IsValid())
 	{
 		//UE_LOG(LogTemp, Log, TEXT("DragCancelled: 바닥에다가 (%s) 아이템을 버려야 한다"),*(invenOp->ItemData->ItemName.ToString()));
-		APickup* pickup = GetWorld()->GetSubsystem<UPickupFactorySubsystem>()->SpawnPickup(invenOp->ItemData->ItemCode,FVector(0,0,0));
 
-		RefreshSlot();
+		//APlayerController * playerController = GetOwningPlayer();
+
+		//if (playerController)
+		//{
+		//	FVector worldLocation;
+		//	FVector worldDirection;
+		//	//FVector2D screenPosition = InDragDropEvent.GetScreenSpacePosition();
+		//	FVector2D screenPosition;
+		//	playerController->GetMousePosition(screenPosition.X, screenPosition.Y);
+		//	if (playerController->DeprojectScreenPositionToWorld(
+		//		screenPosition.X,
+		//		screenPosition.Y,
+		//		worldLocation, worldDirection))
+		//	{
+		//		FVector start = worldLocation;
+		//		FVector end = start + worldDirection * 10000.0f;
+		//		UWorld* world = GetWorld();
+
+		//		FHitResult hitResult;
+
+		//		if (world->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility))
+		//		{
+		//			UPickupFactorySubsystem* pickupFactory = world->GetSubsystem<UPickupFactorySubsystem>();
+		//			for (int32 i = 0; i < invenOp->Count; i++)
+		//			{
+		//				FVector location = hitResult.Location + FVector::UpVector * 100.0f;
+		//				FVector2D randCircle = FMath::RandPointInCircle(30.0f);
+
+		//				location.X += randCircle.X;
+		//				location.Y += randCircle.Y;
+
+		//				pickupFactory->SpawnPickup(invenOp->ItemData->ItemCode, location);
+
+		//			}
+		//		}
+		//	}
+		//}
+		UWorld* world = GetWorld();
+		UPickupFactorySubsystem* pickupFactory = world->GetSubsystem<UPickupFactorySubsystem>();
+		for (int32 i = 0; i < invenOp->Count; i++)
+		{
+			FVector location = FVector::UpVector * 100.0f;
+			FVector2D randCircle = FMath::RandPointInCircle(30.0f);
+
+			location.X += randCircle.X;
+			location.Y += randCircle.Y;
+
+			pickupFactory->SpawnPickup(invenOp->ItemData->ItemCode, location);
+
+		}
 	}
 }
 
