@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Data/ItemDataAsset.h"
 #include "UI/TemporarySlotWidget.h"
+#include "UI/ItemDetailInfoWidget.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -105,12 +106,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	inline TSubclassOf<UTemporarySlotWidget> GetTemporarySlotWidgetClass()const { return TemporarySlotWidgetClass;}
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	inline TSubclassOf<UItemDetailInfoWidget> GetItemDetailInfoWidgetClass()const { return ItemDetailInfoWidgetClass;}
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 InventorySize = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TSubclassOf<UTemporarySlotWidget> TemporarySlotWidgetClass = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TSubclassOf<UItemDetailInfoWidget> ItemDetailInfoWidgetClass = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory|Slot")
 	TArray<FInvenSlot> Slots;

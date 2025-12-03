@@ -38,6 +38,12 @@ protected:
 
 	// 버튼 클릭 삼지
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	// 마우스가 위젯 영역에 들어올 때 호출
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	// 마우스가 위젯 영역에서 나갈 때 호출
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 public:
 	FOnSlotClicked OnSlotRightClick;
 protected:
@@ -55,6 +61,7 @@ protected:
 	// 아이템 아이콘 이미지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|InventorySlot", meta = (BindWidget))
 	TObjectPtr<class UImage> ItemIconImage;
+
 private:
 	int32 Index = -1;
 
@@ -62,4 +69,8 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<UInventoryComponent> TargetInventory = nullptr;
+
+	UPROPERTY()
+	TWeakObjectPtr<UItemDetailInfoWidget>ItemDetailInfoWidget = nullptr;
+
 };

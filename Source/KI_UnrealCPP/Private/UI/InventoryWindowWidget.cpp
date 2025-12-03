@@ -86,6 +86,8 @@ bool UInventoryWindowWidget::NativeOnDrop(const FGeometry& InGeometry, const FDr
     if (invenOp)
     {
         UE_LOG(LogTemp,Log,TEXT("인벤토리에 드랍 : 원래 슬롯으로 아이템이 돌아가야 한다"));
+        TargetInventory->SetItemAtIndex(invenOp->StartIndex, invenOp->ItemData.Get(), invenOp->Count);
+
         return true;
 
      }
