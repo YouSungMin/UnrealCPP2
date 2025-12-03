@@ -43,11 +43,9 @@ void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* Inve
             SlotWidgets.Empty(size);
             for (int i = 0; i < TargetInventory->GetInventorySize(); i++)
             {
-                FInvenSlot* slotData = TargetInventory->GetSlotData(i);
                 UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
-                slotWidget->InitializeSlot(i, slotData);
-                slotWidget->OnSlotRightClick.Clear();
-                slotWidget->OnSlotRightClick.BindUFunction(TargetInventory.Get(), "UseItem");
+                slotWidget->InitializeSlot(TargetInventory.Get(), i);
+
                 SlotWidgets.Add(slotWidget);
             }
         }

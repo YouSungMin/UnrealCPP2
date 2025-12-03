@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Player/InventoryComponent.h"
 #include "InventorySlotWidget.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnSlotClicked, int32, InSlotIndex);
-struct FInvenSlot;
+//struct FInvenSlot;
+//class UInventoryComponent;
 /**
  * 
  */
@@ -17,7 +19,7 @@ class KI_UNREALCPP_API UInventorySlotWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	// 위젯이 보여줄 데이터 세팅
-	void InitializeSlot(int32 InIndex, struct FInvenSlot* InSlotData);
+	void InitializeSlot(UInventoryComponent* InInventoryComponent, int32 InIndex);
 
 	// 설정된 데이터를 기반으로 위젯에서 표시하는 내용을 갱신
 	void RefreshSlot() const;
@@ -54,8 +56,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|InventorySlot", meta = (BindWidget))
 	TObjectPtr<class UImage> ItemIconImage;
 private:
-	FInvenSlot* SlotData = nullptr;
-
 	int32 Index = -1;
 
+	FInvenSlot* SlotData = nullptr;
+
+	UPROPERTY()
+	TWeakObjectPtr<UInventoryComponent> TargetInventory = nullptr;
 };

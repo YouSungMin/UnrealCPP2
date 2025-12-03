@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/ItemDataAsset.h"
+#include "UI/TemporarySlotWidget.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -28,7 +29,8 @@ public:
 		Count = 0;
 	}
 	// getter/setter
-	int32 GetCount() const {return Count;}
+	inline int32 GetRemainingCount() const { return ItemData ? ItemData->ItemMaxStackCount - Count : 0;}
+	inline int32 GetCount() const {return Count;}
 	void SetCount(int32 NewCount){
 			if (ItemData && NewCount > 0)
 			{
@@ -87,6 +89,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ClearSlotAtIndex(int32 InSlotIndex);
 
+	// 아이템을 특정칸에 추가하는 함수 (초기화, 로딩 등에 사용)
+	// InSlotIndex : 아이템에 추가될 슬롯, InItemData : 추가되는 아이템의 종류, InCount 추가되는 아이템 갯수
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount);
+
 	// 특정 슬롯을 확인하기 위한 함수, 읽기 전용(InSlotIndex : 확인 할 슬롯)
 	FInvenSlot* GetSlotData(int32 InSlotIndex);
 
@@ -95,19 +102,24 @@ public:
 
 	inline int32 GetInventorySize() const { return InventorySize; }
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	inline TSubclassOf<UTemporarySlotWidget> GetTemporarySlotWidgetClass()const { return TemporarySlotWidgetClass;}
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 InventorySize = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TSubclassOf<UTemporarySlotWidget> TemporarySlotWidgetClass = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory|Slot")
 	TArray<FInvenSlot> Slots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Money")
 	int32 Money = 0;
+
+
 private:
-	// 아이템을 특정칸에 추가하는 함수 (초기화, 로딩 등에 사용)
-	// InSlotIndex : 아이템에 추가될 슬롯, InItemData : 추가되는 아이템의 종류, InCount 추가되는 아이템 갯수
-	void SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount);
 
 	// 같은 종류의 아이템이 있는 슬롯을 찾는 함수
 	// InItemData: 비교할 아이템의 종류, InStartIndex : 찾기 시작할 인덱스

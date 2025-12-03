@@ -88,6 +88,8 @@ void UInventoryComponent::SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InIt
 
 		TargetSlot.ItemData = InItemData;
 		TargetSlot.SetCount(InCount);		//InCount가 0이면 자동 Clear
+
+		OnInventorySlotChanged.ExecuteIfBound(InSlotIndex);
 	}
 }
 
@@ -101,8 +103,6 @@ void UInventoryComponent::UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount)
 
 		int32 NewCount = TargetSlot.GetCount() + InDeltaCount;
 		SetItemAtIndex(InSlotIndex, TargetSlot.ItemData, NewCount);
-
-		OnInventorySlotChanged.ExecuteIfBound(InSlotIndex);
 	}
 }
 

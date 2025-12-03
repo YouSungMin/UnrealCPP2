@@ -5,14 +5,26 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Player/InventoryComponent.h"
+#include "Framework/PickupFactorySubsystem.h"
 #include "UI/InventoryDragDropOperation.h"
+#include "UI/TemporarySlotWidget.h"
+#include "Item/Pickup.h"
 
-void UInventorySlotWidget::InitializeSlot(int32 InIndex, FInvenSlot* InSlotData)
+void UInventorySlotWidget::InitializeSlot(UInventoryComponent* InInventoryComponent, int32 InIndex)
 {
-	Index = InIndex;
-	SlotData = InSlotData;
+	if (InInventoryComponent)
+	{
+		TargetInventory = InInventoryComponent;
+		Index = InIndex;
+		SlotData = InInventoryComponent->GetSlotData(InIndex);
+		OnSlotRightClick.BindUFunction(TargetInventory.Get(), "UseItem");	// 인벤토리 컴포넌트에 있는 UseItem과 바인딩
 
-	RefreshSlot();
+		RefreshSlot();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("InInventoryComponent가 nullptr 입니다."));
+	}
 }
 
 void UInventorySlotWidget::RefreshSlot() const
@@ -47,28 +59,62 @@ void UInventorySlotWidget::ClearSlotWidget() const
 void UInventorySlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
-	UE_LOG(LogTemp,Log,TEXT("DragDetected : %d Slot"), this->Index);
+	//UE_LOG(LogTemp,Log,TEXT("DragDetected : %d Slot"), this->Index);
 
+	
+	// 기본 데이터 세팅
 	UInventoryDragDropOperation* DragOp = NewObject<UInventoryDragDropOperation>();
-	DragOp->Index = this->Index;
+	DragOp->StartIndex = this->Index;
 	DragOp->ItemData = SlotData->ItemData;
+	DragOp->Count = SlotData->GetCount();
+
+	// 비주얼 위젯 만들기
+	UTemporarySlotWidget* DragTemporaryWidget = CreateWidget<UTemporarySlotWidget>(this, TargetInventory->GetTemporarySlotWidgetClass());
+	DragTemporaryWidget->SetItemIconImage(SlotData->ItemData->ItemIcon);
+	DragTemporaryWidget->SetCountText(SlotData->GetCount());
+
+	DragOp->DefaultDragVisual = DragTemporaryWidget;
 
 	OutOperation = DragOp;
+
+	TargetInventory->ClearSlotAtIndex(Index);
 }
 
 bool UInventorySlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
-	if (invenOp)
+	if (invenOp && invenOp->ItemData.IsValid())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Drop : %d Slot에 옮기기 %s"), Index,*(invenOp->ItemData->ItemName.ToString()));
+		//UE_LOG(LogTemp, Log, TEXT("Drop : %d Slot에 옮기기 %s"), Index,*(invenOp->ItemData->ItemName.ToString()));
+		
+		if (SlotData->IsEmpty())
+		{
+			// 빈슬롯
+			TargetInventory->SetItemAtIndex(Index, invenOp->ItemData.Get(), invenOp->Count);
+		}
+		else
+		{
+			if (SlotData->ItemData == invenOp->ItemData)
+			{
+				int32 count = FMath::Min(SlotData->GetRemainingCount(), invenOp->Count);
+				TargetInventory->UpdateSlotCount(Index, count);
+
+				int32 returnCount = invenOp->Count - count;
+				if (returnCount > 0)
+				{
+					TargetInventory->SetItemAtIndex(invenOp->StartIndex,invenOp->ItemData.Get(),returnCount);
+				}
+			}
+			else
+			{
+				TargetInventory->SetItemAtIndex(invenOp->StartIndex, SlotData->ItemData.Get(), SlotData->GetCount());
+				TargetInventory->SetItemAtIndex(Index, invenOp->ItemData.Get(), invenOp->Count);
+			}
+		}
+
 		return true;
 	}
-	else
-	{
-		return false;
-	}
-	//return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	return false;
 }
 
 void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -77,7 +123,10 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
 	if (invenOp)
 	{
-		UE_LOG(LogTemp, Log, TEXT("DragCancelled: 바닥에다가 (%s) 아이템을 버려야 한다"),*(invenOp->ItemData->ItemName.ToString()));
+		//UE_LOG(LogTemp, Log, TEXT("DragCancelled: 바닥에다가 (%s) 아이템을 버려야 한다"),*(invenOp->ItemData->ItemName.ToString()));
+		APickup* pickup = GetWorld()->GetSubsystem<UPickupFactorySubsystem>()->SpawnPickup(invenOp->ItemData->ItemCode,FVector(0,0,0));
+
+		RefreshSlot();
 	}
 }
 
@@ -87,12 +136,12 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 	{
 		if (SlotData->ItemData)
 		{
-			UE_LOG(LogTemp,Log,TEXT("Widget %d Slot : Right click(%s)"),Index,*SlotData->ItemData->ItemName.ToString());
+			//UE_LOG(LogTemp,Log,TEXT("Widget %d Slot : Right click(%s)"),Index,*SlotData->ItemData->ItemName.ToString());
 			OnSlotRightClick.ExecuteIfBound(Index);
 		}
 		else
 		{
-			UE_LOG(LogTemp,Log,TEXT("Widget %d Slot : Right click(empty)"),Index);
+			//UE_LOG(LogTemp,Log,TEXT("Widget %d Slot : Right click(empty)"),Index);
 		}
 		return FReply::Handled();	// 이 마우스 클릭은 완료되었다고 전달.
 	}
