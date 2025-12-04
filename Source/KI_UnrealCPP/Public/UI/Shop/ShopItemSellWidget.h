@@ -13,5 +13,12 @@ UCLASS()
 class KI_UNREALCPP_API UShopItemSellWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+	void InitializeInventoryWidget(class UInventoryComponent* InventoryComponent);
+
+protected:
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
+
+private:
+	TWeakObjectPtr<class UInventoryComponent> TargetInventory = nullptr;
 };

@@ -13,5 +13,16 @@ UCLASS()
 class KI_UNREALCPP_API UShopWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+public:
+
+private:
+	UFUNCTION()
+	void OnShopCloseClicked();
+
+protected:
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UShopItemSellWidget> ShopItemSell = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<class UButton> CloseButton = nullptr;
 };

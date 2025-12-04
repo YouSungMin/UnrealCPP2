@@ -3,3 +3,6 @@
 
 #include "UI/Shop/ShopWidget.h"
 
+void UShopWidget::OnShopCloseClicked()
+{
+}
