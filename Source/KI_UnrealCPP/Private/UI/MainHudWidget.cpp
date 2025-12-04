@@ -5,6 +5,7 @@
 #include "Player/ActionCharacter.h"
 #include "Player/ResourceComponent.h"
 #include "UI/ResourceBarWidget.h"
+#include "UI/Shop/ShopWidget.h"
 
 void UMainHudWidget::NativeConstruct()
 {
@@ -28,7 +29,12 @@ void UMainHudWidget::NativeConstruct()
 			// inventoryComponent의 내용을 바탕으로 InventoryWidget을 채우기
 		}
 	}
-
+	if (Inventory && Shop)
+	{
+		FScriptDelegate sellDelegate;
+		sellDelegate.BindUFunction(Inventory, "CloseDetailInfo");
+		Shop->AddToItemSellDelegate(sellDelegate);
+	}
 }
 
 void UMainHudWidget::OpenInventory()

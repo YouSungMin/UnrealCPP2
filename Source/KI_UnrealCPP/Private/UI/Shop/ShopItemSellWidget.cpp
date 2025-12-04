@@ -19,6 +19,7 @@ bool UShopItemSellWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragD
             if (player->Implements<UInventoryOwner>())
             {
                 IInventoryOwner::Execute_AddMoney(player, sellPrice);
+                OnItemSell.Broadcast();
                 return true;
             }
         }

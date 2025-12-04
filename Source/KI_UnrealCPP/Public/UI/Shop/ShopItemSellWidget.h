@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ShopItemSellWidget.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemSell);
 /**
  * 
  */
@@ -14,7 +15,7 @@ class KI_UNREALCPP_API UShopItemSellWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void InitializeInventoryWidget(class UInventoryComponent* InventoryComponent);
+	FOnItemSell OnItemSell;
 
 protected:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;

@@ -193,6 +193,7 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 				}
 			}
 		}
+		OnDragDropCanceled.Broadcast();
 	}
 }
 

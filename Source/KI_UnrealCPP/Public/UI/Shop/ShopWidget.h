@@ -14,6 +14,7 @@ class KI_UNREALCPP_API UShopWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	void AddToItemSellDelegate(const FScriptDelegate& Delegate);
 
 private:
 	UFUNCTION()
@@ -21,7 +22,7 @@ private:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	TObjectPtr<class UShopItemSellWidget> ShopItemSell = nullptr;
+	TObjectPtr<class UShopItemSellWidget> ItemSellWidget = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UButton> CloseButton = nullptr;

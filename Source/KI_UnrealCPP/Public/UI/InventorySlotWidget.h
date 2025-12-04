@@ -10,6 +10,7 @@
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnSlotClicked, int32, InSlotIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotEnter, int32, InSlotIndex);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSlotLeave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDragDropCanceled);
 //struct FInvenSlot;
 //class UInventoryComponent;
 /**
@@ -50,6 +51,7 @@ public:
 	FOnSlotClicked OnSlotRightClick;
 	FOnSlotEnter OnSlotEnter;
 	FOnSlotLeave OnSlotLeave;
+	FOnDragDropCanceled OnDragDropCanceled;
 protected:
 	// 아이템 소지 갯수 텍스트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|InventorySlot", meta = (BindWidget))
