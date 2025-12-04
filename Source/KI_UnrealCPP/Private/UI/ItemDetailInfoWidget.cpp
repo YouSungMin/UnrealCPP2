@@ -4,15 +4,58 @@
 #include "UI/ItemDetailInfoWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Data/ItemDataAsset.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
-void UItemDetailInfoWidget::SetInfoIconImage(UTexture2D* InTexture)
+void UItemDetailInfoWidget::Open(UItemDataAsset* InItemData)
 {
-	ItemIconImage->SetBrushFromTexture(InTexture);
+	SetInfo(InItemData);
+	UpdateLocation();
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
-void UItemDetailInfoWidget::SetDetailInfoText(FText InName, FText InPrice, FText InInfo)
+void UItemDetailInfoWidget::Close()
 {
-	ItemNameText->SetText(InName);
-	ItemPriceText->SetText(InPrice);
-	ItemInfoText->SetText(InInfo);
+	SetVisibility(ESlateVisibility::Hidden);
+}
+
+
+void UItemDetailInfoWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+	UpdateLocation();
+}
+
+void UItemDetailInfoWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	CanvasSlot = Cast<UCanvasPanelSlot>(Slot);
+}
+
+void UItemDetailInfoWidget::SetInfo(UItemDataAsset* InItemData)
+{
+	if (InItemData)
+	{
+		ItemNameText->SetText(InItemData->ItemName);
+		ItemPriceText->SetText(FText::AsNumber(InItemData->ItemPrice));
+		ItemDescription->SetText(InItemData->ItemDescription);
+		ItemIconImage->SetBrushFromTexture(InItemData->ItemIcon);
+	}
+}
+
+void UItemDetailInfoWidget::UpdateLocation()
+{
+	if (playerController)
+	{
+		playerController = GetWorld()->GetFirstPlayerController();
+	}
+
+	FVector2D mousePosition = UWidgetLayoutLibrary:: GetMousePositionOnViewport(GetWorld());
+
+	CanvasSlot->SetPosition(mousePosition - ParentPosition);
+	//if(UWidgetLayoutLibrary::GetMousePositionScaledByDPI(playerController, mousePosition.X, mousePosition.Y));
+	//{
+	//	
+	//}
 }

@@ -3,12 +3,13 @@
 
 #include "UI/InventoryWindowWidget.h"
 #include "UI/InventorySlotWidget.h"
-#include "UI/InventorySlotWidget.h"
 #include "UI/GoldPanelWidget.h"
 #include "UI/InventoryDragDropOperation.h"
+#include "UI/ItemDetailInfoWidget.h"
 #include "Player/InventoryComponent.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/Button.h"
+#include "Components/CanvasPanelSlot.h"
 
 void UInventoryWindowWidget::NativeConstruct()
 {
@@ -19,11 +20,18 @@ void UInventoryWindowWidget::NativeConstruct()
         CloseButton->OnClicked.AddDynamic(this, &UInventoryWindowWidget::OnCloseClicked);
     }
 
+
 }
 
 void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* InventoryComponent)
 {
-    if (InventoryComponent)
+    if (DetailInfoPanel)
+    {
+        UCanvasPanelSlot* canvasSlot = Cast<UCanvasPanelSlot>(Slot);
+        DetailInfoPanel->SetParentPosition(canvasSlot->GetPosition());
+    }
+
+    if (InventoryComponent && SlotGridPanel)
     {
         TargetInventory = InventoryComponent;
         if (TargetInventory.IsValid())
@@ -45,6 +53,9 @@ void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* Inve
             {
                 UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
                 slotWidget->InitializeSlot(TargetInventory.Get(), i);
+
+                slotWidget->OnSlotEnter.AddDynamic(this, &UInventoryWindowWidget::OpenDetailInfo);
+                slotWidget->OnSlotLeave.AddDynamic(this, &UInventoryWindowWidget::CloseDetailInfo);
 
                 SlotWidgets.Add(slotWidget);
             }
@@ -98,3 +109,19 @@ void UInventoryWindowWidget::OnCloseClicked()
 {
     OnInventoryCloseRequested.Broadcast();
 }
+
+void UInventoryWindowWidget::OpenDetailInfo(int InIndex)
+{
+
+    if (TargetInventory.IsValid())
+    {
+
+        DetailInfoPanel->Open(TargetInventory->GetSlotData(InIndex)->ItemData);
+    }
+}
+
+void UInventoryWindowWidget::CloseDetailInfo()
+{
+    DetailInfoPanel->Close();
+}
+    

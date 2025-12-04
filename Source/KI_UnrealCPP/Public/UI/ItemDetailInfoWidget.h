@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanelSlot.h"
 #include "ItemDetailInfoWidget.generated.h"
 
+class UTextBlock;
 /**
  * 
  */
@@ -14,20 +16,33 @@ class KI_UNREALCPP_API UItemDetailInfoWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void SetInfoIconImage(UTexture2D* InTexture);
-	void SetDetailInfoText(FText InName, FText InPrice, FText InInfo);
-
+	void Open(class UItemDataAsset* InItemData);
+	void Close();
+	inline void SetParentPosition(const FVector2D& InPosition){ ParentPosition  = InPosition;}
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|DetailInfo", meta = (BindWidget))
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime)override;
+	virtual void NativeConstruct()override;
+private:
+	void SetInfo(class UItemDataAsset* InItemData);
+	void UpdateLocation();
+	
+protected:
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<class UImage> ItemIconImage;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|DetailInfo", meta = (BindWidget))
-	TObjectPtr<class UTextBlock> ItemNameText;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemNameText;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|DetailInfo", meta = (BindWidget))
-	TObjectPtr<class UTextBlock> ItemPriceText;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemPriceText;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|DetailInfo", meta = (BindWidget))
-	TObjectPtr<class UTextBlock> ItemInfoText;
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	TObjectPtr<UTextBlock> ItemDescription;
 
+private:
+	APlayerController* playerController = nullptr;
+
+	UCanvasPanelSlot* CanvasSlot = nullptr;
+
+	FVector2D ParentPosition;
 };

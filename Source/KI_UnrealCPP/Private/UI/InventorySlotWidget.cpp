@@ -137,9 +137,9 @@ void UInventorySlotWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDro
 			FVector2D pixelPosition;
 			FVector2D viewportPosition;
 			USlateBlueprintLibrary::AbsoluteToViewport(this, absolutePosition, pixelPosition, viewportPosition);
-			UE_LOG(LogTemp, Log, TEXT("Screen : %s"), *absolutePosition.ToString());
-			UE_LOG(LogTemp, Log, TEXT("Pixel : %s"), *pixelPosition.ToString());
-			UE_LOG(LogTemp, Log, TEXT("Viewport : %s"), *viewportPosition.ToString());
+			//UE_LOG(LogTemp, Log, TEXT("Screen : %s"), *absolutePosition.ToString());
+			//UE_LOG(LogTemp, Log, TEXT("Pixel : %s"), *pixelPosition.ToString());
+			//UE_LOG(LogTemp, Log, TEXT("Viewport : %s"), *viewportPosition.ToString());
 
 			FVector worldLocation;
 			FVector worldDirection;
@@ -224,57 +224,19 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-
-	// 기본 데이터 세팅
-	UInventoryDragDropOperation* invenOp = NewObject<UInventoryDragDropOperation>();
-	invenOp->ItemData = SlotData->ItemData;
-	if (!ItemDetailInfoWidget.Get())
+	if (SlotData && !SlotData->IsEmpty())
 	{
-		ItemDetailInfoWidget = CreateWidget<UItemDetailInfoWidget>(this, TargetInventory->GetItemDetailInfoWidgetClass());
-	}
-	// 비주얼 위젯 만들기
-	
-	if (ItemDetailInfoWidget.Get())
-	{
-		if (invenOp->ItemData.IsValid())
-		{
-			ItemDetailInfoWidget->SetInfoIconImage(invenOp->ItemData->ItemIcon);
-			ItemDetailInfoWidget->SetDetailInfoText(
-				invenOp->ItemData->ItemName,
-				FText::AsNumber(invenOp->ItemData->ItemPrice),
-				invenOp->ItemData->ItemDescription);
-			if (!ItemDetailInfoWidget->IsInViewport())
-			{
-				ItemDetailInfoWidget->AddToViewport(100);
-				UE_LOG(LogTemp, Log, TEXT("AddToViewport"));
-			}
-			ItemDetailInfoWidget->SetVisibility(ESlateVisibility::Visible);
-			FVector2D MousePosition = InMouseEvent.GetScreenSpacePosition();
+		OnSlotEnter.Broadcast(Index);
 
-			// 마우스보다 살짝 오른쪽 아래에 뜨도록 조정 (예: X+20, Y+20)
-
-			// 위젯의 위치를 강제로 이동시킵니다.
-			ItemDetailInfoWidget->SetPositionInViewport(MousePosition );
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("빈슬롯"));
-		}
 	}
-	else
-	{
-		UE_LOG(LogTemp,Error,TEXT("NativeOnMouseEnter에러"));
-	}
-
 }
 
 void UInventorySlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
 
-
-	if (ItemDetailInfoWidget.Get())
+	if (SlotData && !SlotData->IsEmpty())
 	{
-		ItemDetailInfoWidget->SetVisibility(ESlateVisibility::Hidden);
+		OnSlotLeave.Broadcast();
 	}
 }
