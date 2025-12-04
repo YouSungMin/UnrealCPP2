@@ -46,16 +46,7 @@ void UItemDetailInfoWidget::SetInfo(UItemDataAsset* InItemData)
 
 void UItemDetailInfoWidget::UpdateLocation()
 {
-	if (playerController)
-	{
-		playerController = GetWorld()->GetFirstPlayerController();
-	}
-
 	FVector2D mousePosition = UWidgetLayoutLibrary:: GetMousePositionOnViewport(GetWorld());
 
 	CanvasSlot->SetPosition(mousePosition - ParentPosition);
-	//if(UWidgetLayoutLibrary::GetMousePositionScaledByDPI(playerController, mousePosition.X, mousePosition.Y));
-	//{
-	//	
-	//}
 }
