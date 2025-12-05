@@ -3,6 +3,13 @@
 
 #include "UI/Shop/ShopWidget.h"
 #include "UI/Shop/ShopItemSellWidget.h"
+#include "UI/Shop/ShopItemListWidget.h"
+
+void UShopWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	ResetProductListWidget();
+}
 
 void UShopWidget::AddToItemSellDelegate(const FScriptDelegate& Delegate)
 {
@@ -11,4 +18,12 @@ void UShopWidget::AddToItemSellDelegate(const FScriptDelegate& Delegate)
 
 void UShopWidget::OnShopCloseClicked()
 {
+}
+
+void UShopWidget::ResetProductListWidget()
+{
+	if (ShopItemList.IsValid())
+	{
+		ItemListWidget->ResetItemList(ShopItemList.Get());
+	}
 }
