@@ -42,7 +42,8 @@ public:
 	virtual void AddItem_Implementation(UItemDataAsset* ItemData, int32 ItemCount)override;
 	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount)override;
 	virtual void AddMoney_Implementation(int32 Incom)override;
-	virtual void RemoveMoney_Implementation(int32 Expense)override;
+	virtual void RemoveMoney_Implementation(int32 Expense)override;	
+	virtual int32 GetCurrentMoney_Implementation()override;
 
 	// IHasHealth 인터페이스 함수 구현
 	virtual void HealHealth_Implementation(float InHeal)override;

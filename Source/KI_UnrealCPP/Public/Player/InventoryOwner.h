@@ -36,6 +36,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
 	void RemoveMoney(int32 Expense);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
+	int32 GetCurrentMoney();
+
 	UFUNCTION()
 	virtual class UInventoryComponent* GetInventoryComponent()const = 0;
 };

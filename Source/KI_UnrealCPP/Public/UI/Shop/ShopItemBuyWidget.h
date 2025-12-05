@@ -21,7 +21,7 @@ class KI_UNREALCPP_API UShopItemBuyWidget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 public:
-	void SetItemData(const class UItemDataAsset* ItemData, int32 StockCount);
+	void SetItemData(const class UItemDataAsset* ItemData, int32 InStockCount);
 private:
 	UFUNCTION()
 	void OnItemCountTextChange(const FText& Text);
@@ -57,4 +57,12 @@ protected:
 	TObjectPtr<UOverlay> SoldOut = nullptr;
 private:
 	const int32 MinimumItemCount = 1;
+
+	int32 StockCount = 0;
+
+	UPROPERTY()
+	TWeakObjectPtr<APawn> OwningPawn = nullptr;
+
+	UPROPERTY()
+	 TWeakObjectPtr<const class UItemDataAsset> ShopItemList = nullptr;
 };

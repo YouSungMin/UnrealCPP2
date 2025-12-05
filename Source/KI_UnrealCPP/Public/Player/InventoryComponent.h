@@ -103,6 +103,8 @@ public:
 
 	inline int32 GetInventorySize() const { return InventorySize; }
 
+	inline int32 GetMoney() const { return Money; }
+
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	inline TSubclassOf<UTemporarySlotWidget> GetTemporarySlotWidgetClass()const { return TemporarySlotWidgetClass;}
 
