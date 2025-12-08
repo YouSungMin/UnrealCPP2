@@ -60,3 +60,11 @@ void UShopItemListWidget::ResetItemList(UDataTable* ItemList)
 		ShopItems[i]->SetItemData(row->ItemData, row->StockCount);
 	}
 }
+
+void UShopItemListWidget::UpdateAllBuyButton()
+{
+	for (const UShopItemBuyWidget* item : ShopItems)
+	{
+		item->UpdateBuyButton();
+	}
+}

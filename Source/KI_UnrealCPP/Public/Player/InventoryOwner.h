@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
 	int32 GetCurrentMoney();
 
+	UFUNCTION(BlueprintNativeEvent ,BlueprintCallable, Category = "Inventory")
+	bool HasEnoughMoney(int32 Amount);
+
 	UFUNCTION()
 	virtual class UInventoryComponent* GetInventoryComponent()const = 0;
 };

@@ -4,6 +4,7 @@
 #include "UI/MainHudWidget.h"
 #include "Player/ActionCharacter.h"
 #include "Player/ResourceComponent.h"
+#include "Player/InventoryComponent.h"
 #include "UI/ResourceBarWidget.h"
 #include "UI/Shop/ShopWidget.h"
 
@@ -22,11 +23,13 @@ void UMainHudWidget::NativeConstruct()
 			HealthBar->RefreshWidget(resource->GetCurrentHealth(), resource->GetMaxHealth());
 			StaminaBar->RefreshWidget(resource->GetCurrentStamina(), resource->GetMaxStamina());
 		}
-		if (UInventoryComponent* inventoryComponent  = player->GetInventoryComponent())
-		{
-			//Inventory->OnInventoryCloseRequested.AddDynamic(this, &UMainHudWidget::CloseInventory);
 
-			// inventoryComponent의 내용을 바탕으로 InventoryWidget을 채우기
+		if (UInventoryComponent* inventoryComponent = player->GetInventoryComponent())
+		{
+			if (Shop)
+			{
+				inventoryComponent->OnInventoryMoneyChanged.AddDynamic(Shop, &UShopWidget::UpdateAllByButtonState);
+			}
 		}
 	}
 	if (Inventory && Shop)

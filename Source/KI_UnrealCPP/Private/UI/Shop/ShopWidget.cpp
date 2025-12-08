@@ -16,6 +16,15 @@ void UShopWidget::AddToItemSellDelegate(const FScriptDelegate& Delegate)
 	ItemSellWidget->OnItemSell.Add(Delegate);
 }
 
+void UShopWidget::UpdateAllByButtonState(int32 _)
+{
+	 if(GetVisibility() == ESlateVisibility::Visible || 
+	 GetVisibility() == ESlateVisibility::SelfHitTestInvisible)
+	 {
+		 ItemListWidget->UpdateAllBuyButton();
+	 }
+}
+
 void UShopWidget::OnShopCloseClicked()
 {
 }

@@ -18,7 +18,7 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::AddMoney(int32 InIncome)
 {
 	Money += InIncome;
-	OnInventoryMoneyChanged.ExecuteIfBound(Money);
+	OnInventoryMoneyChanged.Broadcast(Money);
 }
 
 int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)

@@ -44,6 +44,7 @@ public:
 	virtual void AddMoney_Implementation(int32 Incom)override;
 	virtual void RemoveMoney_Implementation(int32 Expense)override;	
 	virtual int32 GetCurrentMoney_Implementation()override;
+	virtual bool HasEnoughMoney_Implementation(int32 Amount)override;
 
 	// IHasHealth 인터페이스 함수 구현
 	virtual void HealHealth_Implementation(float InHeal)override;

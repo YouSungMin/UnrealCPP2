@@ -19,6 +19,9 @@ protected:
 public:
 	void AddToItemSellDelegate(const FScriptDelegate& Delegate);
 
+	UFUNCTION()
+	void UpdateAllByButtonState(int32 _);
+
 private:
 	UFUNCTION()
 	void OnShopCloseClicked();

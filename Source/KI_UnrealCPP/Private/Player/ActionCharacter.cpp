@@ -155,7 +155,11 @@ void AActionCharacter::AddMoney_Implementation(int32 Incom)
 
 void AActionCharacter::RemoveMoney_Implementation(int32 Expense)
 {
-	UE_LOG(LogTemp,Log,TEXT("돈 (%d) 골드를 획득했습니다."),Expense);
+	if (Inventory)
+	{
+		Inventory->AddMoney(-Expense);
+		//UE_LOG(LogTemp,Log,TEXT("돈 (%d) 골드를 획득했습니다. 현재 골드 : %d"),Incom, Inventory->GetCurrentGold());
+	}
 	
 }
 
@@ -166,6 +170,11 @@ int32 AActionCharacter::GetCurrentMoney_Implementation()
 		 return Inventory->GetMoney();
 	}
 	return 0;
+}
+
+bool AActionCharacter::HasEnoughMoney_Implementation(int32 Amount)
+{
+	return Amount < Inventory->GetMoney();
 }
 
 void AActionCharacter::HealHealth_Implementation(float InHeal)

@@ -43,7 +43,7 @@ void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* Inve
                 UE_LOG(LogTemp,Log,TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다."));  
                 return;
             }
-            TargetInventory->OnInventoryMoneyChanged.BindUFunction(this, "RefreshMoneyPanel");
+            TargetInventory->OnInventoryMoneyChanged.AddDynamic(this, &UInventoryWindowWidget::RefreshMoneyPanel);
             TargetInventory->OnInventorySlotChanged.BindUFunction(this, "RefreshSlotWidget");
             RefreshMoneyPanel(0);
 

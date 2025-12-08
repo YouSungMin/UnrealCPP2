@@ -49,7 +49,7 @@ protected:
 };
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventorySlotChanged, int32, InIndex);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventoryMoneyChanged, int32, CurrentMoney);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryMoneyChanged, int32, CurrentMoney);
 
 // 여러개의 아이템 슬롯을 가진다.
 // 하나의 슬롯에는 한종류의 아이템만 들어간다.
@@ -103,7 +103,8 @@ public:
 
 	inline int32 GetInventorySize() const { return InventorySize; }
 
-	inline int32 GetMoney() const { return Money; }
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	inline int GetMoney() const { return Money; }
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	inline TSubclassOf<UTemporarySlotWidget> GetTemporarySlotWidgetClass()const { return TemporarySlotWidgetClass;}
