@@ -22,15 +22,23 @@ void UShopItemBuyWidget::NativeConstruct()
 		ItemCount->OnTextCommitted.AddDynamic(this, &UShopItemBuyWidget::OnItemCountTextCommited);	// 변경을 확정했을 때(엔터 입력 후 , 포커스를 잃은 후)
 
 	}
+	
 	if (ItemBuyButton)
 	{
 		ItemBuyButton->OnClicked.AddDynamic(this, &UShopItemBuyWidget::OnBuyButtonClicked);
 	}
 
+	if (SoldOut)
+	{
+		SoldOut->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void UShopItemBuyWidget::SetItemData(UItemDataAsset* InItemData, int32 InStockCount)
 {
+	ItemCount->SetIsEnabled(true);
+	SoldOut->SetVisibility(ESlateVisibility::Hidden);
+
 	ItemIcon->SetBrushFromTexture(InItemData->ItemIcon);
 	ItemName->SetText(InItemData->ItemName);
 	ItemPrice->SetText(FText::AsNumber(InItemData->ItemPrice));
@@ -84,7 +92,8 @@ void UShopItemBuyWidget::OnBuyButtonClicked()
 		SetBuyCount(MinimumBuyCount);
 		if (StockCount < MinimumBuyCount)
 		{
-			BuyCount = 1;
+			ItemCount->SetIsEnabled(false);
+			SoldOut->SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
 	}
 }

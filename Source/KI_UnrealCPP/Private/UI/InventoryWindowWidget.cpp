@@ -25,41 +25,43 @@ void UInventoryWindowWidget::NativeConstruct()
 
 void UInventoryWindowWidget::InitializeInventoryWidget(UInventoryComponent* InventoryComponent)
 {
-    if (DetailInfoPanel)
+    TargetInventory = InventoryComponent;
+    if (TargetInventory.IsValid())
     {
-        UCanvasPanelSlot* canvasSlot = Cast<UCanvasPanelSlot>(Slot);
-        DetailInfoPanel->SetParentPosition(canvasSlot->GetPosition());
-    }
-
-    if (InventoryComponent && SlotGridPanel)
-    {
-        TargetInventory = InventoryComponent;
-        if (TargetInventory.IsValid())
+        if (DetailInfoPanel)
         {
-            UE_LOG(LogTemp,Log,TEXT("인벤토리 위젯 초기화"));
+            UCanvasPanelSlot* canvasSlot = Cast<UCanvasPanelSlot>(Slot);
+            DetailInfoPanel->SetParentPosition(canvasSlot->GetPosition());
 
-            if (SlotGridPanel->GetChildrenCount() != TargetInventory->GetInventorySize())
-            {
-                UE_LOG(LogTemp,Log,TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다."));  
-                return;
-            }
-            TargetInventory->OnInventoryMoneyChanged.AddDynamic(this, &UInventoryWindowWidget::RefreshMoneyPanel);
-            TargetInventory->OnInventorySlotChanged.BindUFunction(this, "RefreshSlotWidget");
-            RefreshMoneyPanel(0);
+            TargetInventory->OnInventorySlotCleared.AddDynamic(DetailInfoPanel, &UItemDetailInfoWidget::Close);
+        }
 
-            int32 size = FMath::Min(SlotGridPanel->GetChildrenCount(), TargetInventory->GetInventorySize());
-            SlotWidgets.Empty(size);
-            for (int i = 0; i < TargetInventory->GetInventorySize(); i++)
-            {
-                UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
-                slotWidget->InitializeSlot(TargetInventory.Get(), i);
+        if (SlotGridPanel)
+        {
+          UE_LOG(LogTemp,Log,TEXT("인벤토리 위젯 초기화"));
 
-                slotWidget->OnSlotEnter.AddDynamic(this, &UInventoryWindowWidget::OpenDetailInfo);
-                slotWidget->OnSlotLeave.AddDynamic(this, &UInventoryWindowWidget::CloseDetailInfo);
-                slotWidget->OnDragDropCanceled.AddDynamic(this, &UInventoryWindowWidget::CloseDetailInfo);
+          if (SlotGridPanel->GetChildrenCount() != TargetInventory->GetInventorySize())
+          {
+              UE_LOG(LogTemp,Log,TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다."));  
+              return;
+          }
+          TargetInventory->OnInventoryMoneyChanged.AddDynamic(this, &UInventoryWindowWidget::RefreshMoneyPanel);
+          TargetInventory->OnInventorySlotChanged.BindUFunction(this, "RefreshSlotWidget");
+          RefreshMoneyPanel(0);
 
-                SlotWidgets.Add(slotWidget);
-            }
+          int32 size = FMath::Min(SlotGridPanel->GetChildrenCount(), TargetInventory->GetInventorySize());
+          SlotWidgets.Empty(size);
+          for (int i = 0; i < TargetInventory->GetInventorySize(); i++)
+          {
+              UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
+              slotWidget->InitializeSlot(TargetInventory.Get(), i);
+
+              slotWidget->OnSlotEnter.AddDynamic(this, &UInventoryWindowWidget::OpenDetailInfo);
+              slotWidget->OnSlotLeave.AddDynamic(this, &UInventoryWindowWidget::CloseDetailInfo);
+              slotWidget->OnDragDropCanceled.AddDynamic(this, &UInventoryWindowWidget::CloseDetailInfo);
+
+              SlotWidgets.Add(slotWidget);
+           }
         }
     }
 }

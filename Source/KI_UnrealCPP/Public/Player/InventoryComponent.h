@@ -49,6 +49,7 @@ protected:
 };
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventorySlotChanged, int32, InIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventorySlotCleared);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryMoneyChanged, int32, CurrentMoney);
 
 // 여러개의 아이템 슬롯을 가진다.
@@ -68,6 +69,10 @@ public:
 
 	// 인벤토리에서 특정 슬롯에서 변화가 있었을 때 호출되는 델리게이트
 	FOnInventorySlotChanged OnInventorySlotChanged;
+
+	// 인벤토리에서 특정 슬롯이 비워졌을 때 호출되는 델리게이트
+	FOnInventorySlotCleared OnInventorySlotCleared;
+
 	// 인벤토리에서 금액 변화가 있을 때 호출되는 델리게이트
 	FOnInventoryMoneyChanged OnInventoryMoneyChanged;
 public:

@@ -174,7 +174,7 @@ int32 AActionCharacter::GetCurrentMoney_Implementation()
 
 bool AActionCharacter::HasEnoughMoney_Implementation(int32 Amount)
 {
-	return Amount < Inventory->GetMoney();
+	return Amount <= Inventory->GetMoney();
 }
 
 void AActionCharacter::HealHealth_Implementation(float InHeal)
