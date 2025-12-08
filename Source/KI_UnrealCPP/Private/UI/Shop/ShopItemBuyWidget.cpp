@@ -29,17 +29,18 @@ void UShopItemBuyWidget::NativeConstruct()
 
 }
 
-void UShopItemBuyWidget::SetItemData(const UItemDataAsset* InItemData, int32 InStockCount)
+void UShopItemBuyWidget::SetItemData(UItemDataAsset* InItemData, int32 InStockCount)
 {
 	ItemIcon->SetBrushFromTexture(InItemData->ItemIcon);
 	ItemName->SetText(InItemData->ItemName);
 	ItemPrice->SetText(FText::AsNumber(InItemData->ItemPrice));
-	ItemStockCount->SetText(FText::AsNumber(InStockCount));
 	ItemDescription->SetText(InItemData->ItemDescription);
 
-	BuyCount = MinimumBuyCount;
-	StockCount = InStockCount;
+	//ItemStockCount->SetText(FText::AsNumber(InStockCount));
+	//StockCount = InStockCount;
 	ItemData = InItemData;
+	SetStockCount(InStockCount);
+	SetBuyCount(MinimumBuyCount);
 
 	UpdateBuyButton();
 }
@@ -51,8 +52,7 @@ void UShopItemBuyWidget::OnItemCountTextChange(const FText& Text)
 	FString number = Text.ToString();
 	if (number.IsNumeric())
 	{
-		BuyCount = FMath::Clamp(FCString::Atoi(*number),MinimumBuyCount,StockCount);
-		ItemCount->SetText(FText::AsNumber(BuyCount));
+		SetBuyCount(FMath::Clamp(FCString::Atoi(*number), MinimumBuyCount, StockCount));
 
 		UpdateBuyButton();
 	}
@@ -65,47 +65,64 @@ void UShopItemBuyWidget::OnItemCountTextCommited(const FText& Text, ETextCommit:
 	FString number = Text.ToString();
 	if (number.IsNumeric())
 	{
-		int32 count = FCString::Atoi(*number);
-		ItemCount->SetText(FText::AsNumber(count));
+		SetBuyCount(FCString::Atoi(*number));
 	}
 	else
 	{
-		ItemCount->SetText(FText::AsNumber(MinimumBuyCount));
+		SetBuyCount(MinimumBuyCount);
 	}
 }
 
 void UShopItemBuyWidget::OnBuyButtonClicked()
 {
+	APawn* player = GetOwningPlayerPawn();
+	if (player->Implements<UInventoryOwner>())
+	{
+		IInventoryOwner::Execute_AddItem(player,ItemData.Get(), BuyCount);
+		IInventoryOwner::Execute_RemoveMoney(player,ItemData->ItemPrice * BuyCount);
+		SetStockCount(StockCount - BuyCount);
+		SetBuyCount(MinimumBuyCount);
+		if (StockCount < MinimumBuyCount)
+		{
+			BuyCount = 1;
+		}
+	}
+}
 
-	//FString CountStr = ItemCount->GetText().ToString();
-	//if (CountStr.IsNumeric())
-	//{
-	//	int32 BuyCount = FCString::Atoi(*CountStr);
+void UShopItemBuyWidget::SetStockCount(int32 InCount)
+{
+	StockCount = InCount;
+	ItemStockCount->SetText(FText::AsNumber(StockCount));
+	UpdateBuyButton();
+}
 
-	//	if (BuyCount > 0 || BuyCount <= StockCount)
-	//	{
-	//		if (OwningPawn->Implements<UInventoryOwner>())
-	//		{
-	//			// 현재 소지금 확인
-	//			int32 CurrentGold = IInventoryOwner::Execute_GetCurrentMoney(OwningPawn.Get());
-	//			int32 TotalPrice = BuyCount * ItemData->ItemPrice;
-	//			if (CurrentGold >= TotalPrice)
-	//			{
-	//				IInventoryOwner::Execute_RemoveMoney(OwningPawn.Get(),TotalPrice);
-	//				//IInventoryOwner::Execute_AddItem(OwningPawn.Get(),ShopItemData.Get(), BuyCount);
-	//			}
-	//		}
-	//	}
-	//}
+void UShopItemBuyWidget::SetBuyCount(int32 InCount)
+{
+	BuyCount = InCount;
+	if (BuyCount > MinimumBuyCount)
+	{
+		ItemCount->SetText(FText::AsNumber(BuyCount));
+	}
+	else
+	{
+		ItemCount->SetText(FText::GetEmpty());
+	}
 }
 
 void UShopItemBuyWidget::UpdateBuyButton() const
 {
-	APawn* player = GetOwningPlayerPawn();
-	if (player->Implements<UInventoryOwner>())
+	if (StockCount < MinimumBuyCount)
 	{
-		bool hasEnoughMoney = IInventoryOwner::Execute_HasEnoughMoney(player, BuyCount * ItemData->ItemPrice);
+		ItemBuyButton->SetIsEnabled(false);
+	}
+	else
+	{
+		APawn* player = GetOwningPlayerPawn();
+		if (player->Implements<UInventoryOwner>())
+		{
+			bool hasEnoughMoney = IInventoryOwner::Execute_HasEnoughMoney(player, BuyCount * ItemData->ItemPrice);
 
-		ItemBuyButton->SetIsEnabled(hasEnoughMoney);
+			ItemBuyButton->SetIsEnabled(hasEnoughMoney);
+		}
 	}
 }

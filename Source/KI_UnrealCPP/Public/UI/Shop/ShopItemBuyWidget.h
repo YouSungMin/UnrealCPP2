@@ -21,7 +21,7 @@ class KI_UNREALCPP_API UShopItemBuyWidget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 public:
-	void SetItemData(const class UItemDataAsset* InItemData, int32 InStockCount);
+	void SetItemData(class UItemDataAsset* InItemData, int32 InStockCount);
 
 	// 버튼이 활성화 비활성화를 업데이트하는 함수
 	void UpdateBuyButton() const;
@@ -34,6 +34,9 @@ private:
 
 	UFUNCTION()
 	void OnBuyButtonClicked();
+
+	void SetStockCount(int32 InCount);
+	void SetBuyCount(int32 InCount);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Shop|ItemBuy", meta = (BindWidget))
@@ -71,5 +74,5 @@ private:
 
 	// 현재 사려고하는 아이템의 데이터 에셋
 	UPROPERTY()
-	 TWeakObjectPtr<const UItemDataAsset> ItemData = nullptr;
+	 TWeakObjectPtr<UItemDataAsset> ItemData = nullptr;
 };
