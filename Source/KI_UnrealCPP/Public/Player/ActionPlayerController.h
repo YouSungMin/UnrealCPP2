@@ -30,6 +30,10 @@ public:
 
 	virtual void SetupInputComponent() override;
 
+	void OpenShopWidget(class AMerchant* TargetMerchant);
+
+	void CloseShopWidget();
+
 	void OpenInventoryWidget();
 
 	UFUNCTION()
@@ -43,6 +47,8 @@ public:
 private:
 	void OnLookInput(const FInputActionValue& InValue);
 	void OnInventoryOnOff();
+	void FreezePlayer();
+	void UnFreezePlayer();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext = nullptr;

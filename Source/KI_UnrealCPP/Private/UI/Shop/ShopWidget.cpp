@@ -4,10 +4,19 @@
 #include "UI/Shop/ShopWidget.h"
 #include "UI/Shop/ShopItemSellWidget.h"
 #include "UI/Shop/ShopItemListWidget.h"
+#include "Components/Button.h"
 
 void UShopWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	ResetProductListWidget();
+
+	CloseButton->OnClicked.AddDynamic(this, &UShopWidget::OnShopCloseClicked);
+}
+
+void UShopWidget::InitailzeShop(UDataTable* ItemList)
+{
+	ShopItemList = ItemList;
 	ResetProductListWidget();
 }
 
@@ -27,6 +36,7 @@ void UShopWidget::UpdateAllByButtonState(int32 _)
 
 void UShopWidget::OnShopCloseClicked()
 {
+	OnShopCloseRequested.Broadcast();
 }
 
 void UShopWidget::ResetProductListWidget()

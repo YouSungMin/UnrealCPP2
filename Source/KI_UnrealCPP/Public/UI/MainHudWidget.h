@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/InventoryWindowWidget.h"
+#include "UI/Shop/ShopWidget.h"
 #include "MainHudWidget.generated.h"
+
 
 UENUM(BlueprintType)
 enum class EOpenState : uint8
@@ -30,11 +32,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI|Inventory")
 	void CloseInventory();
 
+	UFUNCTION(BlueprintCallable, Category = "UI|Shop")
+	void OpenShop(UDataTable* ItemList);
+
+	UFUNCTION(BlueprintCallable, Category = "UI|Shop")
+	void CloseShop();
+
 	void AddToInventoryCloseDelegate(const FScriptDelegate& Delegate)
 	{
 		if (Inventory)
 		{
 			Inventory->OnInventoryCloseRequested.Add(Delegate);
+		}
+	}
+
+	void AddToShopCloseDelegate(const FScriptDelegate& Delegate)
+	{
+		if (Shop)
+		{
+			Shop->OnShopCloseRequested.Add(Delegate);
 		}
 	}
 

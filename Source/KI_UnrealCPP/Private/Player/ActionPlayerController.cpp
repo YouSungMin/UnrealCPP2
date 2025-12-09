@@ -7,6 +7,7 @@
 #include "InputMappingContext.h"
 #include "Player/InventoryComponent.h"
 #include "Player/ActionCharacter.h"
+#include "NPC/Merchant.h"
 
 void AActionPlayerController::BeginPlay()
 {
@@ -62,6 +63,32 @@ void AActionPlayerController::SetupInputComponent()
 	}
 }
 
+void AActionPlayerController::OpenShopWidget(AMerchant* TargetMerchant)
+{
+	if (MainHudWidget.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("OpenShopWidget"));
+		MainHudWidget->OpenInventory();
+		MainHudWidget->OpenShop(TargetMerchant->GetItemList());
+		FreezePlayer();
+
+		SetViewTargetWithBlend(TargetMerchant, 1, EViewTargetBlendFunction::VTBlend_Cubic);
+	}
+}
+
+void AActionPlayerController::CloseShopWidget()
+{
+	if (MainHudWidget.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("CloseShopWidget"));
+		UnFreezePlayer();
+		MainHudWidget->CloseInventory();
+		MainHudWidget->CloseShop();
+
+		SetViewTargetWithBlend(this->GetPawn(), 1, EViewTargetBlendFunction::VTBlend_Cubic);
+	}
+}
+
 void AActionPlayerController::OnLookInput(const FInputActionValue& InValue)
 {
 	FVector2D lookAxis = InValue.Get<FVector2D>();
@@ -85,24 +112,42 @@ void AActionPlayerController::OnInventoryOnOff()
 	}
 }
 
+void AActionPlayerController::FreezePlayer()
+{
+
+	FInputModeGameAndUI inputMode;
+	inputMode.SetWidgetToFocus(MainHudWidget->TakeWidget());		// 위젯에 포커스 주기
+	inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);	// 마우스 커서가 뷰포트를 벗어날 수 있게 설정
+	inputMode.SetHideCursorDuringCapture(false);	// 마우스가 눌러졌을 때도 커서가 보이도록 설정
+	SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
+
+	bShowMouseCursor = true;
+
+	SetIgnoreMoveInput(true);
+	SetIgnoreLookInput(true);
+
+	//SetPause(true); 
+}
+
+void AActionPlayerController::UnFreezePlayer()
+{
+	SetIgnoreMoveInput(false);
+	SetIgnoreLookInput(false);
+
+	//SetPause(false);
+
+	FInputModeGameOnly inputMode;
+	SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
+
+	bShowMouseCursor = false;
+}
+
 void AActionPlayerController::OpenInventoryWidget()
 {
 	if (MainHudWidget.IsValid())
 	{
 		MainHudWidget->OpenInventory();
-
-		FInputModeGameAndUI inputMode;
-		inputMode.SetWidgetToFocus(MainHudWidget->TakeWidget());		// 위젯에 포커스 주기
-		inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);	// 마우스 커서가 뷰포트를 벗어날 수 있게 설정
-		inputMode.SetHideCursorDuringCapture(false);	// 마우스가 눌러졌을 때도 커서가 보이도록 설정
-		SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
-
-		bShowMouseCursor = true;
-
-		SetIgnoreMoveInput(true);
-		SetIgnoreLookInput(true);
-
-		//SetPause(true); 
+		FreezePlayer();
 	}
 }
 
@@ -110,16 +155,7 @@ void AActionPlayerController::CloseInventoryWidget()
 {
 	if (MainHudWidget.IsValid())
 	{
-		SetIgnoreMoveInput(false);
-		SetIgnoreLookInput(false);
-
-		//SetPause(false);
-
-		FInputModeGameOnly inputMode;
-		SetInputMode(inputMode);	// InputMode를 플레이어 컨트롤러에 적용
-
-		bShowMouseCursor = false;
-
+		UnFreezePlayer();
 		MainHudWidget->CloseInventory();
 	}
 }
@@ -134,6 +170,10 @@ inline void AActionPlayerController::InitializeMainHudWidget(UMainHudWidget* InW
 		FScriptDelegate delegate;
 		delegate.BindUFunction(this, "CloseInventoryWidget");
 		MainHudWidget->AddToInventoryCloseDelegate(delegate);
+
+		FScriptDelegate delegateshop;
+		delegateshop.BindUFunction(this, "CloseShopWidget");
+		MainHudWidget->AddToInventoryCloseDelegate(delegateshop);
 
 		InventoryWidget = MainHudWidget->GetInventoryWidget();
 

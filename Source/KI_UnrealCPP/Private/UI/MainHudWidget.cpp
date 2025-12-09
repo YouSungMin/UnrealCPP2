@@ -11,6 +11,7 @@
 void UMainHudWidget::NativeConstruct()
 {
 	CloseInventory();
+	CloseShop();
 	AActionCharacter* player = Cast<AActionCharacter>(GetOwningPlayerPawn());
 	if (player)
 	{
@@ -51,4 +52,15 @@ void UMainHudWidget::CloseInventory()
 {
 	OpenState = EOpenState::Close;
 	Inventory->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMainHudWidget::OpenShop(UDataTable* ItemList)
+{
+	Shop->InitailzeShop(ItemList);
+	Shop->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainHudWidget::CloseShop()
+{
+	Shop->SetVisibility(ESlateVisibility::Hidden);
 }
