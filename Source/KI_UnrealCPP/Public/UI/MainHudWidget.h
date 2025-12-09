@@ -50,11 +50,14 @@ public:
 	{
 		if (Shop)
 		{
+			UE_LOG(LogTemp,Log,TEXT("AddToShopCloseDelegate"));
 			Shop->OnShopCloseRequested.Add(Delegate);
 		}
 	}
+	inline bool IsInventoryOpen() const { return InventoryState == EOpenState::Open;}
+	inline bool IsShopOpen() const { return ShopState == EOpenState::Open;}
 
-	inline EOpenState GetOpenState() const { return OpenState;} 
+	inline EOpenState GetInventoryState() const { return InventoryState;} 
 	inline UInventoryWindowWidget* GetInventoryWidget() const {return Inventory;}
 
 protected:
@@ -74,6 +77,7 @@ protected:
 	TObjectPtr<class UShopWidget> Shop = nullptr;
 
 private:
-	EOpenState OpenState = EOpenState::Close;
+	EOpenState InventoryState = EOpenState::Close;
+	EOpenState ShopState = EOpenState::Close;
 
 };

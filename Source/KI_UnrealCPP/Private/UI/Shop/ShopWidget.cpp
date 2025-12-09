@@ -11,7 +11,10 @@ void UShopWidget::NativeConstruct()
 	Super::NativeConstruct();
 	ResetProductListWidget();
 
-	CloseButton->OnClicked.AddDynamic(this, &UShopWidget::OnShopCloseClicked);
+	if (CloseButton)
+	{
+		CloseButton->OnClicked.AddDynamic(this, &UShopWidget::OnShopCloseClicked);
+	}
 }
 
 void UShopWidget::InitailzeShop(UDataTable* ItemList)
@@ -36,6 +39,7 @@ void UShopWidget::UpdateAllByButtonState(int32 _)
 
 void UShopWidget::OnShopCloseClicked()
 {
+	UE_LOG(LogTemp, Log, TEXT("OnShopCloseClicked"));
 	OnShopCloseRequested.Broadcast();
 }
 

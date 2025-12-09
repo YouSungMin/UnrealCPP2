@@ -65,7 +65,7 @@ void AActionPlayerController::SetupInputComponent()
 
 void AActionPlayerController::OpenShopWidget(AMerchant* TargetMerchant)
 {
-	if (MainHudWidget.IsValid())
+	if (MainHudWidget.IsValid() && !MainHudWidget->IsShopOpen())
 	{
 		UE_LOG(LogTemp, Log, TEXT("OpenShopWidget"));
 		MainHudWidget->OpenInventory();
@@ -101,7 +101,7 @@ void AActionPlayerController::OnInventoryOnOff()
 {
 	if (MainHudWidget.IsValid())
 	{
-		if (MainHudWidget->GetOpenState() == EOpenState::Open)
+		if (MainHudWidget->GetInventoryState() == EOpenState::Open)
 		{
 			CloseInventoryWidget();
 		}
@@ -144,7 +144,7 @@ void AActionPlayerController::UnFreezePlayer()
 
 void AActionPlayerController::OpenInventoryWidget()
 {
-	if (MainHudWidget.IsValid())
+	if (MainHudWidget.IsValid() && !MainHudWidget->IsInventoryOpen())
 	{
 		MainHudWidget->OpenInventory();
 		FreezePlayer();
@@ -173,7 +173,7 @@ inline void AActionPlayerController::InitializeMainHudWidget(UMainHudWidget* InW
 
 		FScriptDelegate delegateshop;
 		delegateshop.BindUFunction(this, "CloseShopWidget");
-		MainHudWidget->AddToInventoryCloseDelegate(delegateshop);
+		MainHudWidget->AddToShopCloseDelegate(delegateshop);
 
 		InventoryWidget = MainHudWidget->GetInventoryWidget();
 

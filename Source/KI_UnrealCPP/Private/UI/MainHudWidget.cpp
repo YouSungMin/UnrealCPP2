@@ -45,22 +45,27 @@ void UMainHudWidget::OpenInventory()
 {
 	Inventory->RefreshInventoryWidget();
 	Inventory->SetVisibility(ESlateVisibility::Visible);
-	OpenState = EOpenState::Open;
+	InventoryState = EOpenState::Open;
 }
 
 void UMainHudWidget::CloseInventory()
 {
-	OpenState = EOpenState::Close;
+	InventoryState = EOpenState::Close;
 	Inventory->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainHudWidget::OpenShop(UDataTable* ItemList)
 {
-	Shop->InitailzeShop(ItemList);
-	Shop->SetVisibility(ESlateVisibility::Visible);
+	if (ItemList)
+	{
+		Shop->InitailzeShop(ItemList);
+		Shop->SetVisibility(ESlateVisibility::Visible);
+		ShopState = EOpenState::Open;
+	}
 }
 
 void UMainHudWidget::CloseShop()
 {
+	ShopState = EOpenState::Close;
 	Shop->SetVisibility(ESlateVisibility::Hidden);
 }
