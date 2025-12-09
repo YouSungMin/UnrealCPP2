@@ -20,7 +20,6 @@ public:
 	void InitailzeShop(UDataTable* ItemList);
 
 	void AddToItemSellDelegate(const FScriptDelegate& Delegate);
-	void AddToShopCloseDelegate(const FScriptDelegate& Delegate);
 
 	UFUNCTION()
 	void UpdateAllByButtonState(int32 _);

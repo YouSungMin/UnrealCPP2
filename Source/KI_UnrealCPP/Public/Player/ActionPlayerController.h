@@ -32,6 +32,7 @@ public:
 
 	void OpenShopWidget(class AMerchant* TargetMerchant);
 
+	UFUNCTION()
 	void CloseShopWidget();
 
 	void OpenInventoryWidget();
