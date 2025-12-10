@@ -24,6 +24,10 @@ public:
 
 	inline float GetCellHalfSize() const { return CellHalfSize; }
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Maze|Cell")
+	void TestSetPath(EDirectionType Direction);
+
+protected:
 	// 벽과 바닥용 메시
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Maze|Cell")
 	TObjectPtr<UStaticMeshComponent> BaseMesh = nullptr;
@@ -38,8 +42,10 @@ protected:
 
 	//문 두께의 절반
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Maze|Cell")
-	float CellHalfThickness = 50.0f;
-
+	float GateHalfThickness = 50.0f;
+private:
+	void OpenGate();
+	bool IsPath(EDirectionType Direction);
 private:
 	EDirectionType Path = EDirectionType::None;
 };

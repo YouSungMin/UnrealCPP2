@@ -54,7 +54,34 @@ void ACellActor::BeginPlay()
 
 void ACellActor::InitalizeCell(FCellData* InCellData)
 {
-	
+	if (InCellData)
+	{
+		Path = InCellData->Path;
+		OpenGate();
+	}
 }
 
+void ACellActor::TestSetPath(EDirectionType Direction)
+{
+	Path = Direction;
+	OpenGate();
+}
+
+void ACellActor::OpenGate()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		EDirectionType dir = static_cast<EDirectionType>(1 << i);
+		if (IsPath(dir))
+		{
+			GateMeshArray[i]->SetVisibility(false);
+			GateMeshArray[i]->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+	}
+}
+
+bool ACellActor::IsPath(EDirectionType Direction)
+{
+	return (Path & Direction) != EDirectionType::None;
+}
 
