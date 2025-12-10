@@ -135,7 +135,7 @@ FCellData* FMazeData::GetRandomNeighborCell(const FCellData& InCell)
 		int32 index = RandomStream.RandRange(0, DirectionCount - 1);
 		neighborLocation = InCell.GetLocation() + Directions[index];
 	}
-	while(IsValidLocation(neighborLocation.X, neighborLocation.Y));	// 유효한 위치가 나올때까지 반복
+	while(!IsValidLocation(neighborLocation.X, neighborLocation.Y));	// 유효한 위치가 나올때까지 반복
 	return GetCell(static_cast<uint8>(neighborLocation.X), static_cast<uint8>(neighborLocation.Y));
 }
 
